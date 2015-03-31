@@ -50,9 +50,9 @@ and install the following software using pip with the --upgrade switch to allow 
     pip install --upgrade matplotlib
     pip install --upgrade pyke
 
-This will install these packages along with some dependencies into *env* 
-Unfortunately *iris* is not available on pypi.python.org. Thus you will
-have to download it from github:
+This will install these packages along with some dependencies into *env*.
+
+Unfortunately *iris* is not available on pypi.python.org. Thus you will have to download it from github:
 
     git clone https://github.com/SciTools/iris
 
