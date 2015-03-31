@@ -1,6 +1,5 @@
 # Installing pyCAT from source
 
-
 The latest release of pyCAT is available from
 https://github.com/wegener-center/pyCAT
 
