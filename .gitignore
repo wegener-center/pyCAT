@@ -1,0 +1,9 @@
+*.pyc
+*~
+*.log
+\#*
+.\#*
+*.dev
+*.db
+build/
+dist/
