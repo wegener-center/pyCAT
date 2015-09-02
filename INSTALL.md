@@ -29,7 +29,7 @@ you will use:
 
 Change to an empty directory and create the virtual environment with the following command:
 
-    virtualenv --system-site-packages env
+    virtualenv env
 
 where *env* is the freely chooseable name of your environment. As the installation of the python modules for the graphical environment is rather tricky we suggest to use the system-wide installation of python-gtk via aptitude or yum (which is probably already available) by enabling these packages with the given switch (--system-site-packages).
 
@@ -37,18 +37,20 @@ Afterwards activate your freshly installed environment by
 
     source ./env/bin/activate
 
-and install the following software using pip with the --upgrade switch to allow the local installation parallel to the system installations:
+and install the following software using pip:
 
-    pip install --upgrade distribute
-    pip install --upgrade numpy
-    pip install --upgrade scipy
-    pip install --upgrade biggus
-    pip install --upgrade cython
-    pip install --upgrade pyshp
-    pip install --upgrade shapely
-    pip install cartopy==0.11.0
-    pip install --upgrade matplotlib
-    pip install --upgrade pyke
+    pip install distribute
+    pip install numpy
+    pip install scipy
+    pip install NetCDF4 (probably you have to set the CFLAGS=-I/usr/include/hdf5/serial)
+    pip install biggus
+    pip install cython
+    pip install pyshp
+    pip install shapely
+    pip install cartopy
+    pip install pyke --allow-external pyke  --allow-unverified pyke
+    pip install pillow
+    pip install matplotlib
 
 This will install these packages along with some dependencies into *env*.
 

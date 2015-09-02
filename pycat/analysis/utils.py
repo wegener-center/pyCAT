@@ -194,7 +194,7 @@ def _make_time_dimension(start_date, end_date, period='year', align='center'):
                     units=units
                 )
 
-def _create_cube(long_name='', var_name='', units='',
+def _create_cube(long_name='', var_name='', units='1',
                  dim_coords_and_dims=[], fill_value=-1):
     """
     Create an iris.cube.Cube given by its dimensions

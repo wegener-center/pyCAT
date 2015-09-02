@@ -8,7 +8,7 @@ setup(name='pyCAT',
       license='GPLv3',
       author='Armin Leuprecht',
       author_email='armin.leuprecht@uni-graz.at',
-      packages=['pycat', 'pycat.analysis'],
+      packages=['pycat', 'pycat.analysis', 'pycat.io'],
       classifiers=[
           'Development Status :: 1 - Planning',
           'Topic :: Scientific/Engineering :: Physics',
@@ -20,8 +20,8 @@ setup(name='pyCAT',
       ],
       keywords = ['climate', ],
       install_requires = [
-          'numpy', 'scipy', 'biggus', 'cython', 'pyshp', 'shapely',
-          'cartopy==0.11.0', 'matplotlib', 'pyke',
+          'numpy', 'scipy', 'NetCDF4', 'biggus', 'cython', 'pyshp', 'shapely',
+          'cartopy', 'pyke', 'pillow', 'matplotlib'
       ]
       
      )
