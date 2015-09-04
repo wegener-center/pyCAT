@@ -21,7 +21,7 @@ setup(name='pyCAT',
       keywords = ['climate', ],
       install_requires = [
           'numpy', 'scipy', 'NetCDF4', 'biggus', 'cython', 'pyshp', 'shapely',
-          'cartopy', 'pyke', 'pillow', 'matplotlib'
+          'statsmodels', 'cartopy', 'pyke', 'pillow', 'matplotlib'
       ]
       
      )

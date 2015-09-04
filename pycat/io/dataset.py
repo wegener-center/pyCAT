@@ -52,7 +52,7 @@ class Dataset(object):
         self._orig_var_name = self.cube_list[0].var_name
         self._orig_long_name = self.cube_list[0].long_name
         self.calendar = self.cube_list[0].coord('time').units.calendar
-        self._orig_unit = self.cube_list[0].units
+        self._orig_units = self.cube_list[0].units
 
         for ndim, coord in enumerate(self.cube_list[0].dim_coords):
             if coord.units.is_time_reference():
@@ -123,34 +123,7 @@ class Dataset(object):
             pass
 
         try:
-            north, east, south, west = self.extent
-            ll_crs = Geodetic()
-
-            x = self.cube_list[0].coord(axis='X', dim_coords=True)
-            y = self.cube_list[0].coord(axis='Y', dim_coords=True)
-
-            # find south-north bound
-            south_bound = y.points[-1]
-            north_bound = y.points[0]
-            for j in y.points:
-                lat_line = ll_crs.transform_points(self._coord_system, x.points, np.array([j]*len(x.points)))[:,1]
-                if lat_line.max() >= south:
-                    south_bound = min(south_bound, j)
-                if lat_line.min() <= north:
-                    north_bound = max(north_bound, j)
-            west_bound = x.points[-1]
-            east_bound = x.points[0]
-            for i in x.points:
-                lon_line = ll_crs.transform_points(self._coord_system, np.array([i]*len(y.points)), y.points)[:,0]
-                if lon_line.max() >= west:
-                    west_bound = min(west_bound, i)
-                if lon_line.min() <= east:
-                    east_bound = max(east_bound, i)
-
-            constraints &= iris.Constraint(coord_values={
-                x.standard_name: lambda cell: west_bound <= cell.point <= east_bound,
-                y.standard_name: lambda cell: south_bound <= cell.point <= north_bound
-            })
+            constraints &= self._extent_constraint()
         except AttributeError:
             pass
             
@@ -167,6 +140,50 @@ class Dataset(object):
         
         return merged_cube
 
+
+    def _extent_constraint(self):
+        """
+        if Dataset has an extent set return the geographical constraint
+
+        Returns:
+        
+            iris.Constraint over the x and y axis
+        """
+        north, east, south, west = self.extent
+        from matplotlib.path import Path
+        poly = Path([[west, south], [east, south],
+                     [east, north], [west, north]], closed=True)
+        ll_crs = Geodetic()
+        
+        x = self.cube_list[0].coord(axis='X', dim_coords=True)
+        y = self.cube_list[0].coord(axis='Y', dim_coords=True)
+
+        dx = x.points[1] - x.points[0]
+        dy = y.points[1] - y.points[0]
+
+        # get the order of the spatial dimensions
+        xdim = 1
+        ydim = 0
+        if self.cube_list[0].coord_dims(x) < self.cube_list[0].coord_dims(y):
+            xdim = 0
+            ydim = 1
+            
+        xgrid, ygrid = np.meshgrid(x.points, y.points)
+        ll_field = ll_crs.transform_points(self._coord_system, xgrid, ygrid)[:,:,:2]
+        ll_flat = ll_field.reshape((-1,2))
+        mask = poly.contains_points(ll_flat).reshape(xgrid.shape)
+
+        inside_indices = np.where(mask)
+        minx, maxx = inside_indices[xdim].min(), inside_indices[xdim].max()
+        miny, maxy = inside_indices[ydim].min(), inside_indices[ydim].max()
+
+        west_bound, east_bound = x.points[minx]-dx, x.points[maxx]+dx
+        south_bound, north_bound = y.points[miny]-dy, y.points[maxy]+dy
+
+        return constraints & iris.Constraint(coord_values={
+            x.standard_name: lambda cell: west_bound <= cell.point <= east_bound,
+            y.standard_name: lambda cell: south_bound <= cell.point <= north_bound
+        })
 
     def _merge_by_time(self, cl):
         """
@@ -226,11 +243,11 @@ class Dataset(object):
     #define extent
     @property
     def extent(self):
-        return self._extend
+        return self._extent
 
     @extent.setter
     def extent(self, value):
-        self._extend = value
+        self._extent = value
 
     @extent.deleter
     def extent(self):

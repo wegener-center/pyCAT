@@ -40,6 +40,7 @@ Afterwards activate your freshly installed environment by
 and install the following software using pip:
 
     pip install distribute
+    pip install dateutil
     pip install numpy
     pip install scipy
     pip install NetCDF4 (probably you have to set the CFLAGS=-I/usr/include/hdf5/serial)
@@ -47,9 +48,17 @@ and install the following software using pip:
     pip install cython
     pip install pyshp
     pip install shapely
+    pip install statsmodels
     pip install cartopy
     pip install pyke --allow-external pyke  --allow-unverified pyke
     pip install pillow
+
+In order to use the matplotlib with the GTK backend you can install the python
+matplotlib in your virtual environment by install all the GTK stuff (which is
+rather laborius) or linking the required python packages (e.g. on a debian jessie):
+
+    ln -sf /usr/lib/python2.7/dist-packages/{glib,gobject,gtk-2.0,pygtk.py,pygtk.pth} $VIRTUAL_ENV/lib/python2.7/site-packages
+    ln -sf /usr/lib/pymodules/python2.7/cairo $VIRTUAL_ENV/lib/python2.7/site-packages
     pip install matplotlib
 
 This will install these packages along with some dependencies into *env*.
@@ -67,16 +76,16 @@ and install it by changing into the iris directory and running:
 
 To use the powerful interactive shell and debugger you can install:
 
-    pip install --upgrade ipython
-    pip install --upgrade ipdb
+    pip install ipython
+    pip install ipdb
     
 To run the pyCAT test suite you will have to install:
 
-    pip install --upgrade nose
+    pip install nose
 
 For building the full documentation you need:
 
-    pip install --upgrade Sphinx
+    pip install Sphinx
 
 The udunits2 library will help at the conversion of physical units. You can install it via your package manager, e.g. aptitude:
 
