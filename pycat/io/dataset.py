@@ -144,6 +144,9 @@ class Dataset(object):
     def _extent_constraint(self):
         """
         if Dataset has an extent set return the geographical constraint
+        with at least one extra line/row at the north/south- and 
+        west/east-edge, respectively to guarantee a sufficient large
+        extent for interpolating on a smaller grid.
 
         Returns:
         
@@ -152,7 +155,8 @@ class Dataset(object):
         north, east, south, west = self.extent
         from matplotlib.path import Path
         poly = Path([[west, south], [east, south],
-                     [east, north], [west, north]], closed=True)
+                     [east, north], [west, north],
+                     [west,south]], closed=True)
         ll_crs = Geodetic()
         
         x = self.cube_list[0].coord(axis='X', dim_coords=True)
@@ -179,8 +183,10 @@ class Dataset(object):
 
         west_bound, east_bound = x.points[minx]-dx, x.points[maxx]+dx
         south_bound, north_bound = y.points[miny]-dy, y.points[maxy]+dy
+        west_bound, east_bound = x.points[minx], x.points[maxx]
+        south_bound, north_bound = y.points[miny], y.points[maxy]
 
-        return constraints & iris.Constraint(coord_values={
+        return iris.Constraint(coord_values={
             x.standard_name: lambda cell: west_bound <= cell.point <= east_bound,
             y.standard_name: lambda cell: south_bound <= cell.point <= north_bound
         })
