@@ -183,8 +183,6 @@ class Dataset(object):
 
         west_bound, east_bound = x.points[minx]-dx, x.points[maxx]+dx
         south_bound, north_bound = y.points[miny]-dy, y.points[maxy]+dy
-        west_bound, east_bound = x.points[minx], x.points[maxx]
-        south_bound, north_bound = y.points[miny], y.points[maxy]
 
         return iris.Constraint(coord_values={
             x.standard_name: lambda cell: west_bound <= cell.point <= east_bound,
