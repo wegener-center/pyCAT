@@ -32,6 +32,11 @@ class Dataset(object):
     """
     A dataset is a holding meta data to an iris cube
     """
+    days_in_year = {
+        'standard': 366, 'gregorian': 366, 'proleptic_gregorian': 366,
+        'all_leap': 366, '366_day': 366, 'no_leap': 365, '365_day': 365,
+        '360_day': 360
+    }
     def __init__(self, directory, filename, constraints=None,
                  callback=None, tmp_directory=None):
         self.directory = directory
@@ -203,7 +208,7 @@ class Dataset(object):
             a single concatenated cube with the proper units
         """
         try:
-            units = self.units
+            units = self.adjustments['units']
         except AttributeError:
             units = cl[0].units
             
@@ -256,19 +261,6 @@ class Dataset(object):
     @extent.deleter
     def extent(self):
         del self._extent
-
-    # define units
-    @property
-    def units(self):
-        return self._units
-
-    @units.setter
-    def units(self, value):
-        self._units = value
-
-    @units.deleter
-    def units(self):
-        del self._units
 
     # dictionary for some adjustments of cube attributes
     @property

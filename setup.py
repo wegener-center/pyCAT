@@ -8,7 +8,7 @@ setup(name='pyCAT',
       license='GPLv3',
       author='Armin Leuprecht',
       author_email='armin.leuprecht@uni-graz.at',
-      packages=['pycat', 'pycat.analysis', 'pycat.io'],
+      packages=['pycat', 'pycat.analysis', 'pycat.io', 'pycat.downscaling'],
       classifiers=[
           'Development Status :: 1 - Planning',
           'Topic :: Scientific/Engineering :: Physics',
