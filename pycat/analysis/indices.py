@@ -213,12 +213,12 @@ def consecutive_dry_days(cube, period='year', length=6, threshold=1.):
         cat(cdd_index_cube, 'time')
         cat(cdd_periods_cube, 'time')
         
-        cdd_index_max = cdd_index_cube.aggregated_by(period, iris.analysis.MAX)
+        cdd_index_mean = cdd_index_cube.aggregated_by(period, iris.analysis.MEAN)
         cdd_periods_mean = cdd_periods_cube.aggregated_by(period, iris.analysis.MEAN)
 
-        cdd_index_max.remove_coord('time')
+        cdd_index_mean.remove_coord('time')
         cdd_periods_mean.remove_coord('time')
         return iris.cube.CubeList(
-            (cdd_index_max, cdd_periods_mean)
+            (cdd_index_mean, cdd_periods_mean)
         )
                 
