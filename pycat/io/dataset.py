@@ -82,7 +82,6 @@ class Dataset(object):
         if not x.has_bounds():
             x.guess_bounds()
             y.guess_bounds()
-            remove_bounds = True
 
         x_edges = np.concatenate((x.bounds[:,0], np.array([x.bounds[-1,-1]]*y.shape[0]),
                                   x.bounds[:,-1], np.array([x.bounds[0,0]]*y.shape[0])))
@@ -96,9 +95,8 @@ class Dataset(object):
         north, south = max(lon_lat_edges[:,1]), min(lon_lat_edges[:,1])
             
         self._orig_extent = (north, east, south, west)
-        if remove_bounds:
-            x.bounds = None
-            y.bounds = None
+        x.bounds = None
+        y.bounds = None
 
 
     def get_cube(self, extra_constraints=None):
