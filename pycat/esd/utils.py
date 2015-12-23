@@ -52,7 +52,7 @@ def generate_day_constraint_with_window(day_of_year, window, calendar):
         begin = PartialDateTime(month=begin.month, day=begin.day)
         mid = PartialDateTime(month=mid.month, day=mid.day)
         end = PartialDateTime(month=end.month, day=end.day)
-    elif calendar in ['no_leap', '365_day']:
+    elif calendar in ['noleap', '365_day']:
         # take a non-leap year to generate bounds
         start = datetime.datetime(1999,1,1)
         year_start = PartialDateTime(month=1, day=1)
@@ -63,7 +63,7 @@ def generate_day_constraint_with_window(day_of_year, window, calendar):
         begin = PartialDateTime(month=begin.month, day=begin.day)
         mid = PartialDateTime(month=mid.month, day=mid.day)
         end = PartialDateTime(month=end.month, day=end.day)
-    elif calender in ['360_days']:
+    elif calendar in ['360_day']:
         # construct the bounds manually
         year_start = PartialDateTime(month=1, day=1)
         year_end = PartialDateTime(month=12, day=30)

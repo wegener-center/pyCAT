@@ -78,7 +78,8 @@ class Dataset(object):
 
         # save the coordinate system
         self._coord_system = x.coord_system.as_cartopy_crs()
-        
+
+        remove_bounds = False
         if not x.has_bounds():
             x.guess_bounds()
             y.guess_bounds()
