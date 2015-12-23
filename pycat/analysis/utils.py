@@ -11,7 +11,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 #
-# You should have received a copy of the GNU Lesser General Public License
+# You should have received a copy of the GNU General Public License
 # along with pyCAT. If not, see <http://www.gnu.org/licenses/>.
 
 import numpy as np
@@ -119,6 +119,8 @@ def _get_true_block_lengths(array, axis=-1):
 
     if isinstance(a, ma.core.MaskedArray):
         up.mask = a.mask
+    else:
+        up = ma.masked_array(up, False)
     return up, down
 
 def _make_time_dimension(start_date, end_date, period='year', align='center'):

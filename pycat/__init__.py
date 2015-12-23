@@ -11,7 +11,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 #
-# You should have received a copy of the GNU Lesser General Public License
+# You should have received a copy of the GNU General Public License
 # along with pyCAT. If not, see <http://www.gnu.org/licenses/>.
 """
 pyCAT
@@ -40,7 +40,7 @@ config = {
     'tmp_dir': _tmp_dir,
 }
 """
-The config dictionary stores global configuration values for cartopy.
+The config dictionary stores global configuration values for pycat.
 
 In the first instance, the config is defined in ``pycat/__init__.py``. It
 is possible to provide site wide customisations by including a

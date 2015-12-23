@@ -35,6 +35,9 @@ extensions = [
     'sphinx.ext.mathjax',
 ]
 
+# list of packages to document
+autopackage_name = ['pycat']
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
