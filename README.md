@@ -1,5 +1,5 @@
 # pyCAT
-Climate Analisys Tool written in python
+Climate Analysis Tool written in python
 
 (c) Wegener Center for Climate and Global Change
 
