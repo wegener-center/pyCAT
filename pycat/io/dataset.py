@@ -102,7 +102,8 @@ class Dataset(object):
             y.bounds = None
 
 
-    def get_cube(self, extra_constraints=None):
+    def get_cube(self, extra_constraints=None,
+                 lower_limit=None, upper_limit=None):
         """
         return the cube of the dataset constrainted by period and extent
         (if they have been set) and extra constraints given in the call
@@ -113,6 +114,16 @@ class Dataset(object):
         
         * extra_constraints (iris.Constraint):
             will be applied to the cube
+
+        * lower_limit (float or tuple of floats):
+            set cube's data to the value if it's below the threshold
+            lower limit is threshold/value pair. if only a float is given
+            then threshold is equal to value.
+
+        * upper_limit (float or tuple of floats):
+            set cube's data to the value if it's above the threshold
+            upper limit is threshold/value pair. if only a float is given
+            then threshold is equal to value.
 
         Returns:
 
@@ -143,7 +154,22 @@ class Dataset(object):
                 setattr(merged_cube, k, v)
         except AttributeError:
             pass
-        
+
+        # apply limits if given
+        if lower_limit:
+            try:
+                threshold, value = lower_limit[0], lower_limit[1]
+            except:
+                threshold, value = [lower_limit]*2
+            merged_cube.data[np.ma.where(merged_cube.data<threshold)] = value
+
+        if upper_limit:
+            try:
+                threshold, value = upper_limit[0], upper_limit[1]
+            except:
+                threshold, value = [upper_limit]*2
+            merged_cube.data[np.ma.where(merged_cube.data>threshold)] = value
+
         return merged_cube
 
 

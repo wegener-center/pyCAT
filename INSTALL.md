@@ -40,7 +40,7 @@ Afterwards activate your freshly installed environment by
 and install the following software using pip:
 
     pip install distribute
-    pip install dateutil
+    pip install python-dateutil
     pip install numpy
     pip install scipy
     pip install NetCDF4 (probably you have to set the CFLAGS=-I/usr/include/hdf5/serial)

@@ -16,6 +16,11 @@
 # You should have received a copy of the GNU General Public License
 # along with pyCAT. If not, see <http://www.gnu.org/licenses/>.
 
+from iris.time import PartialDateTime
+from iris import Constraint
+import datetime
+
+
 def generate_day_constraint_with_window(day_of_year, window, calendar):
     """
     generate two `iris.Constraint`s for the time axis:
@@ -35,12 +40,8 @@ def generate_day_constraint_with_window(day_of_year, window, calendar):
         noleap, 365_day, all_leap, 366_day, 360_day)
 
     Returns:
-        a 2-tuple of iris.Constraint
+        a 2-tuple of iris.Constraint on the time axis
     """
-    from iris.time import PartialDateTime
-    from iris import Constraint
-    import datetime
-
     if calendar in ['standard', 'gregorian', 'proleptic_gregorian', 'all_leap', '366_day']:
         # take a leap year to generate bounds
         start = datetime.datetime(2000,1,1)
@@ -90,3 +91,23 @@ def generate_day_constraint_with_window(day_of_year, window, calendar):
 
     return day_constraint, window_constraint
 
+def generate_year_constraint_with_window(year, window):
+    """
+    generate two `iris.Constraint`s for the time axis:
+    1. for the exact day of the year over all years
+    2. including all days over all years that lie within day_of_year ± window
+
+    Args:
+
+    * year (int):
+        centered year for the constraint
+
+    * window (int):
+        number of years around the given year
+
+    Returns:
+        an iris.Constraint on the time-axis
+    """
+    first_year = PartialDateTime(year=year-window)
+    last_year = PartialDateTime(year=year+window)
+    return Constraint(time=lambda cell: first_year <= cell.point <= last_year)
