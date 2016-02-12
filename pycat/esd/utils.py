@@ -106,8 +106,24 @@ def generate_year_constraint_with_window(year, window):
         number of years around the given year
 
     Returns:
+
         an iris.Constraint on the time-axis
     """
     first_year = PartialDateTime(year=year-window)
     last_year = PartialDateTime(year=year+window)
     return Constraint(time=lambda cell: first_year <= cell.point <= last_year)
+
+def generate_month_constraint(month):
+    """
+    generate an iris.Constraint on the time-axis for specified month
+
+    Args:
+
+    * month (int):
+       the desired month (1..jan, 12..dec)
+
+    Returns:
+
+       an iris.Constraint on the time-axis
+    """
+    return Constraint(time=lambda cell: cell.point == PartialDateTime(month=month))
