@@ -18,7 +18,9 @@ import numpy as np
 from iris.analysis import Linear
 
 class BiasCorrector(object):
-    
+    """
+    Base class for all bias correction classes
+    """
     def __init__(self, call_func, observation, model, scenarios,
                  reference_period, time_unit='day', correction_period=None,
                  interpolator=Linear(), save_regridded=False):
@@ -196,181 +198,17 @@ class BiasCorrector(object):
                 iris.save(sce_cube, os.path.join(tmp_dir, filename))
             
 
-def _quantile_mapping(obs_cube, mod_cube, sce_cubes, *args, **kwargs):
-    """
-    apply quantile mapping to all scenario cubes using the distributions
-    of obs_cube and mod_cube
-
-    Args:
-
-    * obs_cube (iris.cube.Cube):
-        the observational data
-
-    * mod_cube (iris.cube.Cube):
-        the model data at the reference period
-
-    * sce_cubes (iris.cube.CubeList):
-        the scenario data that shall be corrected
-    """
-    from statsmodels.tools.tools import ECDF
-
-    cell_iterator = np.nditer(obs_cube.data[0], flags=['multi_index'])
-    while not cell_iterator.finished:
-        index = list(cell_iterator.multi_index)
-        cell_iterator.iternext()
-
-        index.insert(0,0)
-        if obs_cube.data.mask[index]:
-            continue
-
-        index[0] = slice(0,None,1)
-        obs_data = obs_cube.data[index]
-        mod_data = mod_cube.data[index]
-        mod_ecdf = ECDF(mod_data)
-
-        for sce_cube in sce_cubes:
-            sce_data = sce_cube[index].data
-            p = mod_ecdf(sce_data)*100
-            corr = np.percentile(obs_data, p) - \
-                   np.percentile(mod_data, p)
-            sce_cube.data[index] += corr
-
-            
-def _relative_scaled_distribution_mapping(obs_cube, mod_cube, sce_cubes,
-                                          *args, **kwargs):
-    """
-    apply relative scaled distribution mapping to all scenario cubes
-    this is for precipitation only! dry days are not accounted for
-    when building the gamma-distribution
-
-    Args:
-
-    * obs_cube (iris.cube.Cube):
-        the observational data
-
-    * mod_cube (iris.cube.Cube):
-        the model data at the reference period
-
-    * sce_cubes (iris.cube.CubeList):
-        the scenario data that shall be corrected
-
-    Kwargs:
-
-    * lower_limit (float):
-        assume values below lower_limit to be zero
-
-    """
-    from scipy.stats import gamma
-
-    lower_limit = kwargs.get('lower_limit', 0.)
-    cell_iterator = np.nditer(obs_cube.data[0], flags=['multi_index'])
-    while not cell_iterator.finished:
-        i, j = cell_iterator.multi_index
-        cell_iterator.iternext()
-        if not obs_cube.data.mask[0,i,j]:
-            # consider only cells with valid observational data
-            obs_data = obs_cube.data[:,i,j]
-            mod_data = mod_cube.data[:,i,j]
-            obs_raindays = obs_data[obs_data>=lower_limit]
-            mod_raindays = mod_data[mod_data>=lower_limit]
-            obs_frequency = 1.*obs_raindays.shape[0] / obs_data.shape[0]
-            mod_frequency = 1.*mod_raindays.shape[0] / mod_data.shape[0]
-            obs_gamma = gamma.fit(obs_raindays, floc=0)
-            mod_gamma = gamma.fit(mod_raindays, floc=0)
-
-            for sce_cube in sce_cubes:
-                sce_data = sce_cube[:,i,j].data
-                sce_raindays = sce_data[sce_data>=lower_limit]
-                sce_frequency = 1.*sce_raindays.shape[0] / sce_data.shape[0]
-                sce_argsort = np.argsort(sce_data)
-                sce_gamma = gamma.fit(sce_raindays, floc=0)
-
-                sce_mod_ratio = min(max(sce_frequency / mod_frequency, .5), 2.)
-                expected_sce_raindays = np.round(
-                    len(obs_raindays) * sce_mod_ratio * len(sce_data) / len(mod_data))
-                
-                pvals = gamma.cdf(np.sort(sce_raindays), *sce_gamma)
-                xvals = gamma.ppf(pvals, *obs_gamma) * gamma.ppf(pvals, *sce_gamma) /\
-                        gamma.ppf(pvals, *mod_gamma)
-                correction = np.zeros(len(sce_data))
-                if len(sce_raindays) > expected_sce_raindays:
-                    xvals = np.interp(
-                        np.linspace(1, len(sce_raindays), expected_sce_raindays),
-                        np.linspace(1, len(sce_raindays), len(sce_raindays)),
-                        xvals
-                    )
-                correction[sce_argsort[-expected_sce_raindays:]] = xvals
-                
-                sce_cube.data[:,i,j] = correction
-
-
-
-def _absolute_scaled_distribution_mapping(obs_cube, mod_cube, sce_cubes,
-                                          *args, **kwargs):
-    """
-    apply relative scaled distribution mapping to all scenario cubes
-    this is for precipitation only! dry days are not accounted for
-    when building the gamma-distribution
-
-    Args:
-
-    * obs_cube (iris.cube.Cube):
-        the observational data
-
-    * mod_cube (iris.cube.Cube):
-        the model data at the reference period
-
-    * sce_cubes (iris.cube.CubeList):
-        the scenario data that shall be corrected
-    """
-    from scipy.stats import gamma
-
-    cell_iterator = np.nditer(obs_cube.data[0], flags=['multi_index'])
-    while not cell_iterator.finished:
-        i, j = cell_iterator.multi_index
-        cell_iterator.iternext()
-        if not obs_cube.data.mask[0,i,j]:
-            # consider only cells with valid observational data
-            obs_data = obs_cube.data[:,i,j]
-            mod_data = mod_cube.data[:,i,j]
-
-            for sce_cube in sce_cubes:
-                sce_data = sce_cube[:,i,j].data
-                correction = sce_data
-                sce_cube.data[:,i,j] = correction
-
 
 
 class QuantileMapping(BiasCorrector):
     """
     convenience class for quantile mapping
     """
+    from .methods import _quantile_mapping
+    
     def __init__(self, observation, model, scenarios, reference_period, window=15, *args, **kwargs):
         super(QuantileMapping, self).__init__(_quantile_mapping, observation,
                                               model, scenarios, reference_period,
                                               time_unit='day', *args, **kwargs)
         self.window = window
 
-class RelativeScaledDistributionMapping(BiasCorrector):
-    """
-    convenience class for the relative scaled distribution mapping
-    """
-    def __init__(self, observation, model, scenarios, reference_period,
-                 correction_period, time_unit='month', *args, **kwargs):
-        super(RelativeScaledDistributionMapping, self).__init__(
-            _relative_scaled_distribution_mapping, observation, model,
-            scenarios, reference_period, time_unit, correction_period,
-            *args, **kwargs)
-
-
-class AbsoluteScaledDistributionMapping(BiasCorrector):
-    """
-    convenience class for the absolute scaled distribution mapping
-    """
-    def __init__(self, observation, model, scenarios, reference_period,
-                 correction_period, time_unit='month', *args, **kwargs):
-        super(AbsoluteScaledDistributionMapping, self).__init__(
-            _absolute_scaled_distribution_mapping, observation, model,
-            scenarios, reference_period, time_unit, correction_period,
-            *args, **kwargs)
-        
