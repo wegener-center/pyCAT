@@ -15,8 +15,12 @@
 # along with pyCAT. If not, see <http://www.gnu.org/licenses/>.
 
 """
-this file provides the actual correction functions with the following singature
+this file provides the actual correction functions with the following singature:
+obs_cube (Cube), mod_cube(Cube), sce_cubes(list of Cubes), *args, **kwargs
 """
+
+import numpy as np
+
 def _quantile_mapping(obs_cube, mod_cube, sce_cubes, *args, **kwargs):
     """
     Quantile Mapping
@@ -37,7 +41,7 @@ def _quantile_mapping(obs_cube, mod_cube, sce_cubes, *args, **kwargs):
         the scenario data that shall be corrected
     """
     from statsmodels.tools.tools import ECDF
-
+    
     cell_iterator = np.nditer(obs_cube.data[0], flags=['multi_index'])
     while not cell_iterator.finished:
         index_list = list(cell_iterator.multi_index)
