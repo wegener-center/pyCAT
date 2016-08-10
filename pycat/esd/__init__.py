@@ -17,6 +17,8 @@
 import numpy as np
 from iris.analysis import Linear
 
+from .methods import _quantile_mapping, _scaled_distribution_mapping
+
 class BiasCorrector(object):
     """
     Base class for all bias correction classes
@@ -204,12 +206,20 @@ class QuantileMapping(BiasCorrector):
     """
     convenience class for quantile mapping
     """
-    from .methods import _quantile_mapping
-    
     def __init__(self, observation, model, scenarios, reference_period,
                  window=15, *args, **kwargs):
         super(QuantileMapping, self).__init__(
             self._quantile_mapping, observation, model, scenarios,
             reference_period, time_unit='day', *args, **kwargs)
         self.window = window
+
+class ScaledDistributionMapping(BiasCorrector):
+    """
+    convenience class for scaled distribution mapping
+    """
+    def __init__(self, observation, model, scenarios, reference_period,
+                 correction_period, time_unit='month', *args, **kwargs):
+        super(ScaledDistributionMapping, self).__init__(
+            _scaled_distribution_mapping, observation, model, scenarios, reference_period,
+            time_unit, correction_period, *args, **kwargs)
 

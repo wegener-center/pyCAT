@@ -8,6 +8,7 @@ pycat/analysis/__init__.py
 pycat/analysis/indices.py
 pycat/analysis/utils.py
 pycat/esd/__init__.py
+pycat/esd/methods.py
 pycat/esd/utils.py
 pycat/io/__init__.py
 pycat/io/callbacks.py
