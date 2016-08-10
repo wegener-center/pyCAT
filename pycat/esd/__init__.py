@@ -209,7 +209,7 @@ class QuantileMapping(BiasCorrector):
     def __init__(self, observation, model, scenarios, reference_period,
                  window=15, *args, **kwargs):
         super(QuantileMapping, self).__init__(
-            self._quantile_mapping, observation, model, scenarios,
+            _quantile_mapping, observation, model, scenarios,
             reference_period, time_unit='day', *args, **kwargs)
         self.window = window
 
