@@ -21,7 +21,11 @@ from dateutil import parser
 from dateutil.relativedelta import relativedelta
 
 import iris
-from iris.unit import Unit
+try:
+    from cf_units import Unit
+except:
+    # for iris<=1.9
+    from iris.unit import Unit
 from iris.coords import DimCoord
 
 def _get_max_true_block_length(up_down):
