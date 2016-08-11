@@ -1,0 +1,14 @@
+# Use this file to create a conda environment using:
+# conda create -n <name> --file conda-requirements.txt
+
+# Mandatory dependencies
+iris
+
+# build dependencies
+setuptools
+
+# testing
+nose
+
+# documentation
+sphinx
