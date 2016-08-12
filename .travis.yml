@@ -21,8 +21,10 @@ install:
 
   # create the test environment
   - ENV_NAME='test-env'
+  - conda config --add channels defaults
   - conda config --set always_yes yes --set changeps1 no
   - conda config --set show_channel_urls True
+  - conda update --quiet conda
   - conda create --quiet -n $ENV_NAME python=$TRAVIS_PYTHON_VERSION
   - source activate $ENV_NAME
 
