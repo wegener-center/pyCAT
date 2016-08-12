@@ -53,6 +53,3 @@ def test_leap_year():
 
     # there must be 25 leap years
     assert c.shape[0] == 25
-
-    
-    
