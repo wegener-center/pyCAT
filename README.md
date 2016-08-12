@@ -1,4 +1,7 @@
 # pyCAT
+
+[![Build Status](https://travis-ci.org/wegener-center/pyCAT.svg?branch=master)](https://travis-ci.org/wegener-center/pyCAT)
+
 Climate Analysis Tool written in python
 
 (c) Wegener Center for Climate and Global Change
