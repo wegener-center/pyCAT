@@ -1,6 +1,9 @@
 # pyCAT
 
 [![Build Status](https://travis-ci.org/wegener-center/pyCAT.svg?branch=master)](https://travis-ci.org/wegener-center/pyCAT)
+[![GitHub issues](https://img.shields.io/github/issues/wegener-center/pyCAT.svg)](https://github.com/wegener-center/pyCAT/issues)
+[![GitHub forks](https://img.shields.io/github/forks/wegener-center/pyCAT.svg)](https://github.com/wegener-center/pyCAT/network)
+[![GitHub license](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://github.com/wegener-center/pyCAT/blob/master/LICENSE.md)
 
 Climate Analysis Tool written in python
 
