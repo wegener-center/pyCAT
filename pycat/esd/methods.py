@@ -40,7 +40,7 @@ def _quantile_mapping(obs_cube, mod_cube, sce_cubes, *args, **kwargs):
     * sce_cubes (iris.cube.CubeList):
         the scenario data that shall be corrected
     """
-    from statsmodels.tools.tools import ECDF
+    from statsmodels.distributions.empirical_distribution import ECDF
     
     cell_iterator = np.nditer(obs_cube.data[0], flags=['multi_index'])
     while not cell_iterator.finished:
