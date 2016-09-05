@@ -5,6 +5,7 @@
 .\#*
 *.dev
 *.db
+MANIFEST
 build/
 dist/
 code/
