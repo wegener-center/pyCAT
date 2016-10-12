@@ -33,7 +33,7 @@ Once conda is running you just need to create an environment, add the
 scitools-channel and install the dependencies
 
     ENV_NAME="env"
-    conda create --name $ENV_NAME --python=2.7
+    conda create --name $ENV_NAME python=2.7
     conda config --add channels scitools
     source activate $ENV_NAME
     conda install --file conda-requirements.txt
