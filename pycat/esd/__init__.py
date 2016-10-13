@@ -218,8 +218,9 @@ class ScaledDistributionMapping(BiasCorrector):
     convenience class for scaled distribution mapping
     """
     def __init__(self, observation, model, scenarios, reference_period,
-                 correction_period, time_unit='month', *args, **kwargs):
+                 correction_period, *args, **kwargs):
         super(ScaledDistributionMapping, self).__init__(
-            _scaled_distribution_mapping, observation, model, scenarios, reference_period,
-            time_unit, correction_period, *args, **kwargs)
+            _scaled_distribution_mapping, observation, model, scenarios,
+            reference_period, time_unit='month', correction_period,
+            *args, **kwargs)
 
