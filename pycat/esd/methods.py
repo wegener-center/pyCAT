@@ -275,8 +275,9 @@ def _absolute_sdm(
             adapted_cdf[adapted_cdf<0] += 1.
             adapted_cdf = np.maximum(np.minimum(adapted_cdf, cdf_threshold), 1-cdf_threshold)
             
-            xvals = norm.ppf(np.sort(adapted_cdf), *obs_norm) +\
-                    norm.ppf(sce_cdf, *sce_norm) - norm.ppf(sce_cdf, *mod_norm)
+            xvals = norm.ppf(np.sort(adapted_cdf), *obs_norm) \
+                    + obs_norm[-1] / mod_norm[-1] \
+                    * (norm.ppf(sce_cdf, *sce_norm) - norm.ppf(sce_cdf, *mod_norm))
             xvals -= xvals.mean()
             xvals += obs_mean + (sce_mean - mod_mean)
             
