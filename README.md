@@ -18,6 +18,7 @@ Documentation
 
 Documentation will be available soon on-line.
 
+The SDM bias-correction method is published online at [HESSD](http://www.hydrol-earth-syst-sci-discuss.net/hess-2016-435/).
 
 Copyright and license
 ---------------------
