@@ -73,6 +73,10 @@ def _relative_sdm(
     apply relative scaled distribution mapping to all scenario cubes
     assuming a gamma distributed parameter (with lower limit zero)
 
+    if one of obs, mod or sce data has less than min_samplesize valid
+    values, the correction will NOT be performed but the original data
+    is output
+
     Args:
 
     * obs_cube (iris.cube.Cube):
@@ -91,11 +95,16 @@ def _relative_sdm(
 
     * cdf_threshold (float):
         limit of the cdf-values (default: .99999999)
+
+    * min_samplesize (int):
+        minimal number of samples (e.g. wet days) for the gamma fit
+        (default: 10)
     """
     from scipy.stats import gamma
 
     lower_limit = kwargs.get('lower_limit', 0.1)
     cdf_threshold = kwargs.get('cdf_threshold', .99999999)
+    min_samplesize = kwargs.get('min_samplesize', 10)
     
     cell_iterator = np.nditer(obs_cube.data[0], flags=['multi_index'])
     while not cell_iterator.finished:
@@ -116,6 +125,10 @@ def _relative_sdm(
         mod_data = mod_cube.data[index]
         obs_raindays = obs_data[obs_data>=lower_limit]
         mod_raindays = mod_data[mod_data>=lower_limit]
+
+        if obs_raindays.size < min_samplesize or mod_raindays.size < min_samplesize:
+            continue
+        
         obs_frequency = 1.*obs_raindays.shape[0] / obs_data.shape[0]
         mod_frequency = 1.*mod_raindays.shape[0] / mod_data.shape[0]
         obs_gamma = gamma.fit(obs_raindays, floc=0)
@@ -129,6 +142,10 @@ def _relative_sdm(
         for sce_cube in sce_cubes:
             sce_data = sce_cube[index].data
             sce_raindays = sce_data[sce_data>=lower_limit]
+
+            if sce_raindays.size < min_samplesize:
+                continue
+            
             sce_frequency = 1.*sce_raindays.shape[0] / sce_data.shape[0]
             sce_argsort = np.argsort(sce_data)
             sce_gamma = gamma.fit(sce_raindays, floc=0)
@@ -315,7 +332,7 @@ def _scaled_distribution_mapping(
     try:
         implemented_parameters[obs_cube.standard_name](
             obs_cube, mod_cube, sce_cubes, *args, **kwargs)
-    except:
+    except KeyError:
         logging.error('SDM not implemented for {}'.format(obs_cube.standard_name))
 
 
