@@ -14,11 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with pyCAT. If not, see <http://www.gnu.org/licenses/>.
 import iris
-from iris.experimental.equalise_cubes import equalise_attributes
-from cartopy.crs import Geodetic
-
 import os
-import glob
 import numpy as np
 
 
@@ -60,6 +56,8 @@ class Dataset(object):
             path to a write-able directory where intermediate data can be saved
             defaults to directory/tmp
         """
+        from cartopy.crs import Geodetic
+        
         self.directory = directory
         self.filename = filename
         self.tmp_directory = tmp_directory or os.path.join(directory, 'tmp')
@@ -170,6 +168,8 @@ class Dataset(object):
 
             the concatenated constrained cube of the Dataset
         """
+        from iris.experimental.equalise_cubes import equalise_attributes
+        
         constraints = extra_constraints
         try:
             start, end = self.period
