@@ -7,11 +7,8 @@ https://github.com/wegener-center/pyCAT
 Building and running pyCAT requires a range of other libraries and
 python modules. Once you have resolved all these dependencies (see
 details below) change to the installation path and enter:
-<<<<<<< HEAD:INSTALL.md
-=======
 
 ::
->>>>>>> sdm:INSTALL.rst
 
     python setup.py install
 
@@ -32,30 +29,6 @@ environment.
 The proposed installation (using conda)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-<<<<<<< HEAD:INSTALL.md
-At the moment pyCAT requires Python 2 and is not compatible with
-Python 3.
-
-Here you will find a list of external packages you will need to
-install before building and running pyCAT.
-
-Many of these packages are available via a Linux package manager such
-as aptitude or yum. But we strongly encourage people to work within a
-virtual environment and install the latest stable releases of the
-packages using pip. In fact the easiest way uses conda as virtual
-environment.
-
-### The proposed installation (using conda)
-
-Download and install conda from
-http://conda.pydata.org/miniconda.html.
-
-Once conda is running you just need to create an environment, add the
-scitools-channel and install the dependencies
-
-    ENV_NAME="env"
-    conda create --name $ENV_NAME --python=2.7
-=======
 Download and install conda from http://conda.pydata.org/miniconda.html.
 
 Once conda is running you just need to create an environment, add the
@@ -65,18 +38,12 @@ scitools-channel and install the dependencies
 
     ENV_NAME="env"
     conda create --name $ENV_NAME python=2.7
->>>>>>> sdm:INSTALL.rst
     conda config --add channels scitools
     source activate $ENV_NAME
     conda install --file conda-requirements.txt
 
 Afterwards you can install pyCAT
 
-<<<<<<< HEAD:INSTALL.md
-    python setup.py install
-    
-### Installation using python-virtualenv (the long way)
-=======
 ::
    
     python setup.py install
@@ -84,7 +51,6 @@ Afterwards you can install pyCAT
 
 Installation using python-virtualenv (the long way)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->>>>>>> sdm:INSTALL.rst
 
 For a debian-based Linux distribution enter:
 
@@ -99,29 +65,18 @@ distros you will use:
 
     sudo yum install python-virtualenv
 
-<<<<<<< HEAD:INSTALL.md
-Change to an empty directory and create the virtual environment with
-the following command:
-=======
 Change to an empty directory and create the virtual environment with the
 following command:
 
 ::
->>>>>>> sdm:INSTALL.rst
 
     virtualenv env
 
 where *env* is the freely chooseable name of your environment. As the
 installation of the python modules for the graphical environment is
 rather tricky we suggest to use the system-wide installation of
-<<<<<<< HEAD:INSTALL.md
-python-gtk via aptitude or yum (which is probably already available)
-by enabling these packages with the given switch
-(--system-site-packages).
-=======
 python-gtk via aptitude or yum (which is probably already available) by
 enabling these packages with the given switch (–system-site-packages).
->>>>>>> sdm:INSTALL.rst
 
 Afterwards activate your freshly installed environment by
 
@@ -130,11 +85,8 @@ Afterwards activate your freshly installed environment by
     source ./env/bin/activate
 
 and install the following software using pip (iris dependencies):
-<<<<<<< HEAD:INSTALL.md
-=======
 
 ::
->>>>>>> sdm:INSTALL.rst
 
     pip install distribute
     pip install python-dateutil
@@ -151,19 +103,12 @@ and install the following software using pip (iris dependencies):
     pip install pyke --allow-external pyke  --allow-unverified pyke
     pip install pillow
 
-<<<<<<< HEAD:INSTALL.md
-In order to use the matplotlib with the GTK backend you can install
-the python matplotlib in your virtual environment by install all the
-GTK stuff (which is rather laborius) or linking the required python
-packages (e.g. on a debian jessie):
-=======
 In order to use the matplotlib with the GTK backend you can install the
 python matplotlib in your virtual environment by install all the GTK
 stuff (which is rather laborius) or linking the required python packages
 (e.g. on a debian jessie using python 2.7):
 
 ::
->>>>>>> sdm:INSTALL.rst
 
     ln -sf /usr/lib/python2.7/dist-packages/{glib,gobject,gtk-2.0,pygtk.py,pygtk.pth} $VIRTUAL_ENV/lib/python2.7/site-packages
     ln -sf /usr/lib/pymodules/python2.7/cairo $VIRTUAL_ENV/lib/python2.7/site-packages
@@ -172,15 +117,10 @@ stuff (which is rather laborius) or linking the required python packages
 This will install these packages along with some dependencies into
 *env*.
 
-<<<<<<< HEAD:INSTALL.md
-Unfortunately *iris* is not available on pypi.python.org. Thus you
-will have to download it from github:
-=======
 Unfortunately *iris* is not available on pypi.python.org. Thus you will
 have to download it from github:
 
 ::
->>>>>>> sdm:INSTALL.rst
 
     git clone https://github.com/SciTools/iris
 
@@ -212,15 +152,10 @@ For building the full documentation you need:
 
     pip install Sphinx
 
-<<<<<<< HEAD:INSTALL.md
-The udunits2 library will help at the conversion of physical
-units. You can install it via your package manager, e.g. aptitude:
-=======
 The udunits2 library will help at the conversion of physical units. You
 can install it via your package manager, e.g. aptitude:
 
 ::
->>>>>>> sdm:INSTALL.rst
 
     sudo aptitude install udunits-bin
 
