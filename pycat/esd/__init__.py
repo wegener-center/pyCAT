@@ -17,12 +17,15 @@
 import numpy as np
 from iris.analysis import Linear
 
-from .methods import _quantile_mapping, _scaled_distribution_mapping
+from .methods import quantile_mapping, scaled_distribution_mapping
+
 
 class BiasCorrector(object):
+
     """
     Base class for all bias correction classes
     """
+
     def __init__(self, call_func, observation, model, scenarios,
                  reference_period, time_unit='day', correction_period=None,
                  interpolator=Linear(), save_regridded=False):
@@ -30,31 +33,42 @@ class BiasCorrector(object):
         Args:
 
         * call_func (callable):
-            | *call signature*: (obs_cube, ref_cube, sce_cubes, *args, **kwargs)
+            | *call signature*: (obs_cube, ref_cube, sce_cubes,
+                                 \*args, \**kwargs)
 
-        * observation (pycat.io.dataset.Dataset):
+        * observation (:class:`pycat.io.Dataset`):
             the observation dataset
 
-        * model (pycat.io.dataset.Dataset):
+        * model (:class:`pycat.io.dataset.Dataset`):
             the model dataset
 
-        * scenarios (pycat.io.dataset.Dataset or list of those)
+        * scenarios (:class:`pycat.io.dataset.Dataset` or list of those)
             the scenarios that shall be bias corrected
 
-        * reference_period (tuple of datetime.datetime):
+        * reference_period (tuple of :class:`datetime.datetime`):
             the reference period that observations and model share
 
         Kwargs:
 
         * time_unit (str):
-            correction will be performed on daily (day) or monthly (month) basis
+            correction will be performed on daily (day) or
+            monthly (month) basis
 
-        * correction_period (tuple of datetime.datetime):
+        * correction_period (tuple of :class:`datetime.datetime`):
             the period for which the correction shall be done
 
-        * interpolator (iris.analysis.Interpolator):
+        * interpolator:
             an available interpolation scheme for regridding to the
-            observational dataset
+            observational dataset. Currently available schemes are:
+
+            * :class:`iris.analysis.Linear` (default)
+
+            * :class:`iris.analysis.Nearest`
+
+            * :class:`iris.analysis.AreaWeighted`
+
+        * save_regridded (boolean):
+            wheter regridded data shall be stored to disk (default: False)
         """
         self.call_func = call_func
         self.obs = observation
@@ -81,15 +95,15 @@ class BiasCorrector(object):
         if hasattr(scenarios, '__iter__'):
             self.sce = scenarios
         else:
-            self.sce = [ scenarios ]
+            self.sce = [scenarios]
 
         for sce in self.sce:
             sce.extent = obs_extent
             sce.adjustments = obs_phenomenon
             if correction_period:
                 sce.period = correction_period
-                
-        self.time_unit = time_unit       
+
+        self.time_unit = time_unit
         self.interpolator = interpolator
         self.save_regridded = save_regridded
 
@@ -97,25 +111,26 @@ class BiasCorrector(object):
         """
         assemble data that is given to the actual correction function
 
+        kwargs are passed to :meth:`call_func`
+
         Args:
-        
+
         * unit_list (None, int, iterable):
             depending on self.time_unit this is interpreted as
             all days/months of year (None), single day/month (int) or
-            lost of days/months (iterable)
-
-        * kwargs:
-            is passed to self.call_func
+            list of days/months (iterable)
         """
         import os
-        from .utils import generate_day_constraint_with_window, generate_month_constraint
+        from .utils import (
+            generate_day_constraint_with_window,
+            generate_month_constraint)
         import iris
         from numpy import ma
         import collections
 
         regridder = None
         if isinstance(unit_list, int):
-            unit_list = [ unit_list ]
+            unit_list = [unit_list]
         elif isinstance(unit_list, collections.Iterable):
             pass
         else:
@@ -125,7 +140,7 @@ class BiasCorrector(object):
 
         # padding for the filename day/month number
         padding = self.time_unit == 'day' and 3 or 2
-        
+
         for unit in unit_list:
             obs_cube = None
             if self.time_unit == 'day':
@@ -133,28 +148,32 @@ class BiasCorrector(object):
                 if self.obs.days_in_year[self.obs.calendar] != \
                    self.mod.days_in_year[self.mod.calendar]:
                     obs_day = self.obs.days_in_year[self.obs.calendar] * unit /\
-                              self.mod.days_in_year[self.mod.calendar]
+                        self.mod.days_in_year[self.mod.calendar]
                     single_constraint, window_constraint = \
-                        generate_day_constraint_with_window(obs_day, self.window, self.obs.calendar)
+                        generate_day_constraint_with_window(
+                            obs_day, self.window, self.obs.calendar)
                     obs_cube = self.obs.get_cube(window_constraint)
-                
+
                 single_constraint, window_constraint = \
-                    generate_day_constraint_with_window(unit, self.window, self.mod.calendar)
+                    generate_day_constraint_with_window(
+                        unit, self.window, self.mod.calendar)
 
             else:
                 # a monthly method: single- and window-constraint are the same
                 single_constraint, window_constraint = \
-                    [generate_month_constraint(unit)]*2
+                    [generate_month_constraint(unit)] * 2
 
             # ok, got all constraints now it's the same for daily and monthly
             # extract data from obs, mod and sce
             obs_cube = obs_cube or self.obs.get_cube(window_constraint)
             mod_cube = self.mod.get_cube(window_constraint)
 
-            regridder = regridder or self.interpolator.regridder(mod_cube, obs_cube)
+            regridder = regridder or self.interpolator.regridder(
+                mod_cube, obs_cube)
             mod_cube = regridder(mod_cube)
 
-            obs_first_time_slice = obs_cube.slices_over(obs_cube.coords(axis='T', dim_coords=True)).next()
+            obs_first_time_slice = obs_cube.slices_over(
+                obs_cube.coords(axis='T', dim_coords=True)).next()
 
             sce_cubes = iris.cube.CubeList()
             for sce in self.sce:
@@ -162,19 +181,24 @@ class BiasCorrector(object):
                 try:
                     # mask the scenario data if the observation has a mask
                     sce_cube.data = ma.masked_array(
-                        sce_cube.data, mask=[ obs_first_time_slice.data.mask ]*sce_cube.coord('time').shape[0])
+                        sce_cube.data,
+                        mask=[obs_first_time_slice.data.mask]
+                        * sce_cube.coord('time').shape[0])
                 except AttributeError:
                     pass
                 sce_cubes.append(sce_cube)
 
-            fn_template = '{method}_{variable}_scenario-{scenario:d}_{startyear}-{endyear}_{time_unit}-{unit:0{padding}d}.nc'
+            fn_template = '{method}_{variable}_scenario-{scenario:d}' \
+                          '_{startyear}-{endyear}_' \
+                          '{time_unit}-{unit:0{padding}d}.nc'
             if self.save_regridded:
                 for sce_number, sce_cube in enumerate(sce_cubes):
                     tmp_dir = self.sce[sce_number].tmp_directory
                     time_coord = sce_cube.coord('time')
                     startyear, endyear = [
-                        date.year for date in \
-                        time_coord.units.num2date(time_coord.points[np.array([0,-1])]) ]
+                        date.year for date in
+                        time_coord.units.num2date(
+                            time_coord.points[np.array([0, -1])])]
                     filename = fn_template.format(
                         method='regridded', variable=sce_cube.var_name,
                         startyear=startyear, endyear=endyear,
@@ -185,27 +209,29 @@ class BiasCorrector(object):
             # call the correction function
             self.call_func(obs_cube, mod_cube, sce_cubes, *args, **kwargs)
 
-            # save the cubes into the temporary directory with a simple filename
+            # save the cubes into the temporary directory with a simple
+            # filename
             for sce_number, sce_cube in enumerate(sce_cubes):
                 tmp_dir = self.sce[sce_number].tmp_directory
                 time_coord = sce_cube.coord('time')
                 startyear, endyear = [
-                    date.year for date in \
-                    time_coord.units.num2date(time_coord.points[np.array([0,-1])]) ]
+                    date.year for date in
+                    time_coord.units.num2date(
+                        time_coord.points[np.array([0, -1])])]
                 filename = fn_template.format(
                     method=self.call_func.__name__.strip('_'),
                     variable=sce_cube.var_name, scenario=sce_number,
                     startyear=startyear, endyear=endyear,
                     time_unit=self.time_unit, unit=unit, padding=padding)
                 iris.save(sce_cube, os.path.join(tmp_dir, filename))
-            
-
 
 
 class QuantileMapping(BiasCorrector):
+
     """
     convenience class for quantile mapping
     """
+
     def __init__(self, observation, model, scenarios, reference_period,
                  window=15, *args, **kwargs):
         super(QuantileMapping, self).__init__(
@@ -213,14 +239,16 @@ class QuantileMapping(BiasCorrector):
             reference_period, time_unit='day', *args, **kwargs)
         self.window = window
 
+
 class ScaledDistributionMapping(BiasCorrector):
+
     """
     convenience class for scaled distribution mapping
     """
+
     def __init__(self, observation, model, scenarios, reference_period,
                  correction_period, *args, **kwargs):
         super(ScaledDistributionMapping, self).__init__(
             _scaled_distribution_mapping, observation, model, scenarios,
-            reference_period, time_unit='month', correction_period,
+            reference_period, correction_period, time_unit='month',
             *args, **kwargs)
-

@@ -15,7 +15,6 @@ tttt*
 /devel
 files.txt
 callbacks.py
-/docs
 pycat/time
 pycat/tests
 siteconfig.py

@@ -15,17 +15,23 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with pyCAT. If not, see <http://www.gnu.org/licenses/>.
+"""
+Utility functions needed for generating temporal constraints on
+:class:`iris.cube.Cubes <iris.cube.Cube>`
+"""
 
 from iris.time import PartialDateTime
 from iris import Constraint
-import datetime
+import datetime as dt
 
 
-def generate_day_constraint_with_window(day_of_year, window, calendar):
+def generate_day_constraint_with_window(day_of_year, window, calendar='standard'):
     """
-    generate two `iris.Constraint`s for the time axis:
-    1. for the exact day of the year over all years
-    2. including all days over all years that lie within day_of_year ± window
+    generate two :class:`iris.Constraints <iris.Constraint>` for the time axis:
+
+      1. for the exact day of the year over all years
+
+      2. including all days over all years that lie within day_of_year ± window
 
     Args:
 
@@ -35,16 +41,16 @@ def generate_day_constraint_with_window(day_of_year, window, calendar):
     * window (int):
         the size of the temporal window around the given day (in days)
 
-    * calendar (string):
-        a supported calendar (standard, gregorian, proleptic_gregorian,
-        noleap, 365_day, all_leap, 366_day, 360_day)
+    * calendar (str):
+        a supported calendar: standard (default), gregorian, 
+        proleptic_gregorian, noleap, 365_day, all_leap, 366_day, 360_day
 
     Returns:
-        a 2-tuple of iris.Constraint on the time axis
+        a 2-tuple of :class:`iris.Constraints <iris.Constraint>` on the time axis
     """
     if calendar in ['standard', 'gregorian', 'proleptic_gregorian', 'all_leap', '366_day']:
         # take a leap year to generate bounds
-        start = datetime.datetime(2000,1,1)
+        start = dt.datetime(2000,1,1)
         year_start = PartialDateTime(month=1, day=1)
         year_end = PartialDateTime(month=12, day=31)
         begin = start + datetime.timedelta(days=day_of_year-window)
@@ -55,7 +61,7 @@ def generate_day_constraint_with_window(day_of_year, window, calendar):
         end = PartialDateTime(month=end.month, day=end.day)
     elif calendar in ['noleap', '365_day']:
         # take a non-leap year to generate bounds
-        start = datetime.datetime(1999,1,1)
+        start = dt.datetime(1999,1,1)
         year_start = PartialDateTime(month=1, day=1)
         year_end = PartialDateTime(month=12, day=31)
         begin = start + datetime.timedelta(days=day_of_year-window)
@@ -91,11 +97,10 @@ def generate_day_constraint_with_window(day_of_year, window, calendar):
 
     return day_constraint, window_constraint
 
+
 def generate_year_constraint_with_window(year, window):
     """
-    generate two `iris.Constraint`s for the time axis:
-    1. for the exact day of the year over all years
-    2. including all days over all years that lie within day_of_year ± window
+    generate a :class:`iris.Constraint` on the time axis for specified year ± window
 
     Args:
 
@@ -107,15 +112,16 @@ def generate_year_constraint_with_window(year, window):
 
     Returns:
 
-        an iris.Constraint on the time-axis
+        an :class:`iris.Constraint` on the time-axis
     """
     first_year = PartialDateTime(year=year-window)
     last_year = PartialDateTime(year=year+window)
     return Constraint(time=lambda cell: first_year <= cell.point <= last_year)
 
+
 def generate_month_constraint(month):
     """
-    generate an iris.Constraint on the time-axis for specified month
+    generate an :class:`iris.Constraint` on the time-axis for a specified month
 
     Args:
 
@@ -124,6 +130,6 @@ def generate_month_constraint(month):
 
     Returns:
 
-       an iris.Constraint on the time-axis
+       an :class:`iris.Constraint` on the time-axis
     """
     return Constraint(time=lambda cell: cell.point == PartialDateTime(month=month))
