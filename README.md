@@ -16,14 +16,15 @@ pyCAT can be installed using the following command:
 
     python setup.py install
 
-For detailed installation instruction, especially how to install dependencies, please refer to the [INSTALL](INSTALL.md) file.
+For detailed installation instruction, especially how to install dependencies, please refer to the [INSTALL](INSTALL.rst) file.
 
 
 Documentation
 -------------
 
-Documentation will be available soon on-line.
+Documentation is available at [readthedocs](http://pycat.readthedocs.io/en/latest/).
 
+The SDM bias-correction method is published online at [HESSD](http://www.hydrol-earth-syst-sci-discuss.net/hess-2016-435/).
 
 Copyright and license
 ---------------------

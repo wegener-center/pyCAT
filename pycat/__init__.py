@@ -18,13 +18,12 @@ pyCAT
 =====
 
 A package for analyzing climate data
-
 """
 
 import logging
 
 # pyCAT version
-__version__ = '0.0.1-DEV'
+__version__ = '1.0.0'
 
 # restrict imports when using "from pycat import *"
 __all__ = ['config', 'tmp_path', 'data_path']
@@ -70,6 +69,7 @@ except ImportError:
 
 def tmp_path(*path_to_join):
     return os.path.join(config['tmp_dir'], *path_to_join)
+
 
 def data_path(*path_to_join):
     return os.path.join(config['data_dir'], *path_to_join)

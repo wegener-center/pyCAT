@@ -12,4 +12,10 @@ code/
 _build
 _static
 _templates
-
+tttt*
+/devel
+files.txt
+callbacks.py
+pycat/time
+pycat/tests
+siteconfig.py

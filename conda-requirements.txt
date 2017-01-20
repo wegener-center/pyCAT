@@ -3,6 +3,7 @@
 
 # Mandatory dependencies
 iris
+statsmodels
 
 # build dependencies
 setuptools

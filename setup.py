@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
 from distutils.core import setup
+from pycat import __version__ as version
 
 setup(name='pyCAT',
-      version='0.0.1.dev1',
+      version=version,
       description='Climate Analysis Tool',
       license='GPLv3',
       author='Armin Leuprecht',
@@ -15,8 +16,11 @@ setup(name='pyCAT',
           'Intended Audience :: Science/Research',
           'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
           'Programming Language :: Python :: 2',
-          'Programming Language :: Python :: 2.6',
           'Programming Language :: Python :: 2.7',
+          'Programming Language :: Python :: 3',
+          'Programming Language :: Python :: 3.4',
       ],
       keywords = ['climate', ],
+
+      tests_require = ['nose'],
      )
