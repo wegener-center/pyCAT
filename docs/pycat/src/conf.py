@@ -44,7 +44,6 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.autosummary',
     'sphinx.ext.ifconfig',
-    'sphinx.ext.githubpages',
     'sphinx.ext.intersphinx',
 ]
 
