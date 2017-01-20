@@ -25,7 +25,10 @@ Documentation
 
 Documentation is available at [readthedocs](http://pycat.readthedocs.io/en/latest/).
 
-The SDM bias-correction method is published online at [HESSD](http://www.hydrol-earth-syst-sci-discuss.net/hess-2016-435/).
+The implemented bias-correction methods are described in:
+
+    - Basic [Quantile Mapping](http://dx.doi.org/10.1002/joc.2168)
+    - [Scaled Distribution Mapping](http://www.hydrol-earth-syst-sci-discuss.net/hess-2016-435/)
 
 Copyright and license
 ---------------------
