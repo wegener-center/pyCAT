@@ -17,7 +17,8 @@ pyCAT can be installed using the following command:
 
     python setup.py install
 
-For detailed installation instruction, especially how to install dependencies, please refer to the [INSTALL](INSTALL.rst) file.
+For detailed installation instruction, especially how to install
+dependencies, please refer to the [INSTALL](INSTALL.rst) file.
 
 
 Documentation
@@ -33,5 +34,8 @@ The implemented bias-correction methods are described in:
 Copyright and license
 ---------------------
 
-pyCAT is free software distributed under the terms of the GNU General Public License (Version 3) as published by the Free Software Foundation. You will find a copy of the GPLv3 in the [LICENSE](LICENSE.md) file.
+pyCAT is free software distributed under the terms of the GNU General
+Public License (Version 3) as published by the Free Software
+Foundation. You will find a copy of the GPLv3 in the
+[LICENSE](LICENSE.md) file.
 
