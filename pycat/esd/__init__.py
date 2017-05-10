@@ -135,8 +135,8 @@ class BiasCorrector(object):
             pass
         else:
             unit_list = self.time_unit == 'day' and \
-                xrange(self.mod.days_in_year[self.mod.calendar]) or \
-                xrange(1, 13)
+                range(self.mod.days_in_year[self.mod.calendar]) or \
+                range(1, 13)
 
         # padding for the filename day/month number
         padding = self.time_unit == 'day' and 3 or 2
@@ -147,8 +147,8 @@ class BiasCorrector(object):
                 # check if obs and mod have calendars with same number of days
                 if self.obs.days_in_year[self.obs.calendar] != \
                    self.mod.days_in_year[self.mod.calendar]:
-                    obs_day = self.obs.days_in_year[self.obs.calendar] * unit /\
-                        self.mod.days_in_year[self.mod.calendar]
+                    obs_day = self.obs.days_in_year[self.obs.calendar] \
+                        * unit / self.mod.days_in_year[self.mod.calendar]
                     single_constraint, window_constraint = \
                         generate_day_constraint_with_window(
                             obs_day, self.window, self.obs.calendar)
@@ -235,7 +235,7 @@ class QuantileMapping(BiasCorrector):
     def __init__(self, observation, model, scenarios, reference_period,
                  window=15, *args, **kwargs):
         super(QuantileMapping, self).__init__(
-            _quantile_mapping, observation, model, scenarios,
+            quantile_mapping, observation, model, scenarios,
             reference_period, time_unit='day', *args, **kwargs)
         self.window = window
 
@@ -249,6 +249,6 @@ class ScaledDistributionMapping(BiasCorrector):
     def __init__(self, observation, model, scenarios, reference_period,
                  correction_period, *args, **kwargs):
         super(ScaledDistributionMapping, self).__init__(
-            _scaled_distribution_mapping, observation, model, scenarios,
+            scaled_distribution_mapping, observation, model, scenarios,
             reference_period, correction_period, time_unit='month',
             *args, **kwargs)

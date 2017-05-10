@@ -17,15 +17,14 @@
 # along with pyCAT. If not, see <http://www.gnu.org/licenses/>.
 
 import iris
+import numpy as np
+import pycat.esd.utils
+
 try:
     from cf_units import Unit
 except:
     from iris.unit import Unit
-    
-import numpy as np
-import datetime
 
-import pycat.esd.utils
 
 def _create_cube(calendar):
     """
@@ -42,12 +41,14 @@ def _create_cube(calendar):
     cube.add_dim_coord(time, 0)
     return cube
 
+
 def test_leap_year():
     calendar = 'standard'
-    leap_day = 59 # this is 29th of february in leap years
+    leap_day = 59  # this is 29th of february in leap years
     cube = _create_cube(calendar)
     day_contraint, window_constraint = \
-        pycat.esd.utils.generate_day_constraint_with_window(leap_day, 1, calendar)
+        pycat.esd.utils.generate_day_constraint_with_window(
+            leap_day, 1, calendar)
     with iris.FUTURE.context(cell_datetime_objects=True):
         c = cube.extract(day_contraint)
 

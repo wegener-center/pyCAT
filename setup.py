@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from distutils.core import setup
+
 from pycat import __version__ as version
 
 setup(name='pyCAT',
@@ -20,7 +21,6 @@ setup(name='pyCAT',
           'Programming Language :: Python :: 3',
           'Programming Language :: Python :: 3.4',
       ],
-      keywords = ['climate', ],
-
-      tests_require = ['nose'],
-     )
+      keywords=['climate', ],
+      tests_require=['nose'],
+      )

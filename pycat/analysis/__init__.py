@@ -19,7 +19,6 @@ A package providing calculation of climate indices.
 This module defines a suite of :class:`pycat.analysis.Indexer` instances,
 """
 
-import iris.analysis as ia
 
 class Indexer(object):
     """
@@ -28,16 +27,11 @@ class Indexer(object):
     """
     pass
 
+
 class Period(object):
     """
-    The :class:`Period` class provides 
+    The :class:`Period` class provides
     """
-    def __init__(self, ):
+
+    def __init__(self):
         pass
-
-def consecutive_dry_days(cube):
-    pass
-
-
-
-

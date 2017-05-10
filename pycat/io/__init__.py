@@ -13,17 +13,15 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with pyCAT. If not, see <http://www.gnu.org/licenses/>.
-import iris
-from iris.experimental.equalise_cubes import equalise_attributes
-from cartopy.crs import Geodetic
-
 import os
-import glob
+
+import iris
 import numpy as np
+from cartopy.crs import Geodetic
+from iris.experimental.equalise_cubes import equalise_attributes
 
 
 class Dataset(object):
-
     """
     A Dataset is holding meta data for an :class:`iris.cube.Cube`
 
@@ -134,7 +132,7 @@ class Dataset(object):
         )
 
     def __str__(self):
-        return unicode(self).encode('utf-8')
+        return self.__unicode__(self)
 
     def __unicode__(self):
         try:
@@ -283,7 +281,7 @@ class Dataset(object):
                 if cube.coord(axis='T').shape[0] == 1:
                     cl_new.append(cube)
                 else:
-                    for time in xrange(cube.coord(axis='T').shape[0]):
+                    for time in range(cube.coord(axis='T').shape[0]):
                         tmp = cube[time]
                         cl_new.append(tmp)
 

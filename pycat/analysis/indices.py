@@ -17,13 +17,12 @@
 Calculation of climate indices
 """
 import iris
-from iris.analysis import Aggregator
 import iris.coord_categorisation as ccat
-from iris.exceptions import CoordinateNotFoundError
-
 import numpy as np
+from iris.analysis import Aggregator
+from iris.exceptions import CoordinateNotFoundError
+from pycat.analysis.utils import _create_cube, _make_time_dimension
 
-from pycat.analysis.utils import _make_time_dimension, _create_cube
 
 def consecutive_dry_days(cube, period='year', length=6, threshold=1.):
     """
@@ -44,7 +43,8 @@ def consecutive_dry_days(cube, period='year', length=6, threshold=1.):
         The number of days without rainfall that define a dry period
 
     * threshold (float):
-        The upper limit of daily rainfall in mm that indicates 'no precipitation'
+        The upper limit of daily rainfall in mm that indicates
+        'no precipitation'
 
     Returns:
 
@@ -62,7 +62,7 @@ def consecutive_dry_days(cube, period='year', length=6, threshold=1.):
 
         * array (numpy.array or numpy.ma.array):
             array that holds the precipitation data
-        
+
         * axis (int):
             the number of the time-axis
 
@@ -70,11 +70,13 @@ def consecutive_dry_days(cube, period='year', length=6, threshold=1.):
             the threshold that indicates a precipiation-less day
 
         Returns:
-            the aggregation result, collapsing the 'axis' dimension of the 'data' argument
+            the aggregation result, collapsing the 'axis' dimension of
+            the 'data' argument
         """
-        from pycat.analysis.utils import _get_max_true_block_length, _get_true_block_lengths
+        from pycat.analysis.utils import (
+            _get_max_true_block_length, _get_true_block_lengths)
 
-        up_down = _get_true_block_lengths(array<threshold, axis)
+        up_down = _get_true_block_lengths(array < threshold, axis)
         return _get_max_true_block_length(up_down)
 
     def _cdd_periods(array, axis, threshold, length):
@@ -87,7 +89,7 @@ def consecutive_dry_days(cube, period='year', length=6, threshold=1.):
 
         * array (numpy.array or numpy.ma.array):
             array that holds the precipitation data
-        
+
         * axis (int):
             the number of the time-axis
 
@@ -98,11 +100,13 @@ def consecutive_dry_days(cube, period='year', length=6, threshold=1.):
             number of days that a dry period must last
 
         Returns:
-            the aggregation result, collapsing the 'axis' dimension of the 'data' argument
+            the aggregation result, collapsing the 'axis' dimension
+            of the 'data' argument
         """
-        from pycat.analysis.utils import _get_len_true_block_length, _get_true_block_lengths
+        from pycat.analysis.utils import (
+            _get_len_true_block_length, _get_true_block_lengths)
 
-        up_down = _get_true_block_lengths(array<threshold, axis)
+        up_down = _get_true_block_lengths(array < threshold, axis)
         return _get_len_true_block_length(up_down, length)
 
     # build the iris.analysis.Aggregators
@@ -126,14 +130,14 @@ def consecutive_dry_days(cube, period='year', length=6, threshold=1.):
             ccat.add_year(cube, 'time')
             years = np.unique(cube.coord('year').points)
         constraint_year_key = 'year'
-        
+
     if period in ['season', 'month']:
         try:
-            index_period = np.unique(cube.coord('%s_number'%period).points)
+            index_period = np.unique(cube.coord('%s_number' % period).points)
         except CoordinateNotFoundError:
             cat = getattr(ccat, 'add_%s_number' % period)
             cat(cube, 'time')
-            index_period = np.unique(cube.coord('%s_number'%period).points)
+            index_period = np.unique(cube.coord('%s_number' % period).points)
 
     # create time-axis of resulting cubes
     time_dimension = _make_time_dimension(
@@ -145,22 +149,27 @@ def consecutive_dry_days(cube, period='year', length=6, threshold=1.):
     slices = []
     for coord in cube.dim_coords:
         if coord.units.is_time_reference():
-            dim_coords_and_dims.append((time_dimension, cube.coord_dims(coord)))
+            dim_coords_and_dims.append(
+                (time_dimension, cube.coord_dims(coord)))
             slices.append(0)
             time_axis = cube.coord_dims(coord)[0]
         else:
             dim_coords_and_dims.append((coord, cube.coord_dims(coord)))
-            slices.append(slice(None,None,None))
+            slices.append(slice(None, None, None))
 
     cdd_index_cube = _create_cube(
-        long_name='Consecutive dry days is the greatest number of consecutive days per time period with daily precipitation amount below %s mm.' % threshold,
+        long_name='Consecutive dry days is the greatest number of '
+                  'consecutive days per time period with daily '
+                  'precipitation amount below %s mm.' % threshold,
         var_name='consecutive_dry_days_index_per_time_period',
         units=iris.unit.Unit('1'),
         dim_coords_and_dims=dim_coords_and_dims)
 
     cdd_periods_cube = _create_cube(
-        long_name='Number of cdd periods in given time period with more than %d days.' % length,
-        var_name='number_of_cdd_periods_with_more_than_%ddays_per_time_period' % length,
+        long_name='Number of cdd periods in given time period '
+        'with more than %d days.' % length,
+        var_name='number_of_cdd_periods_with_more_than_'
+                 '%ddays_per_time_period' % length,
         units=iris.unit.Unit('1'),
         dim_coords_and_dims=dim_coords_and_dims)
 
@@ -170,12 +179,12 @@ def consecutive_dry_days(cube, period='year', length=6, threshold=1.):
         # the maximum cdd length and the number of cdd periods for each year
         for year in years:
             tmp_cube = cube.extract(iris.Constraint(year=year))
-            slices[time_axis] = year-years[0]
+            slices[time_axis] = year - years[0]
             cdd_index_data = tmp_cube.collapsed(
                 'time', cdd_index, threshold=threshold).data
             cdd_periods_data = tmp_cube.collapsed(
                 'time', cdd_periods, threshold=threshold, length=length).data
-            
+
             cdd_index_cube.data[slices] = cdd_index_data
             cdd_periods_cube.data[slices] = cdd_periods_data
 
@@ -195,7 +204,7 @@ def consecutive_dry_days(cube, period='year', length=6, threshold=1.):
                 if tmp_cube:
                     # the extraction can lead to empty cubes for seasons
                     # in the last year
-                    time_index = (year-years[0])*len(index_period) + p
+                    time_index = (year - years[0]) * len(index_period) + p
                     # months numbers start at 1
                     if period == 'month':
                         time_index -= 1
@@ -203,22 +212,24 @@ def consecutive_dry_days(cube, period='year', length=6, threshold=1.):
                     cdd_index_data = tmp_cube.collapsed(
                         'time', cdd_index, threshold=threshold).data
                     cdd_periods_data = tmp_cube.collapsed(
-                        'time', cdd_periods, threshold=threshold, length=length).data
-            
+                        'time', cdd_periods, threshold=threshold,
+                        length=length).data
+
                     cdd_index_cube.data[slices] = cdd_index_data
                     cdd_periods_cube.data[slices] = cdd_periods_data
-                    
+
         # aggregate over seasons/months
         cat = getattr(ccat, 'add_%s' % period)
         cat(cdd_index_cube, 'time')
         cat(cdd_periods_cube, 'time')
-        
-        cdd_index_mean = cdd_index_cube.aggregated_by(period, iris.analysis.MEAN)
-        cdd_periods_mean = cdd_periods_cube.aggregated_by(period, iris.analysis.MEAN)
+
+        cdd_index_mean = cdd_index_cube.aggregated_by(
+            period, iris.analysis.MEAN)
+        cdd_periods_mean = cdd_periods_cube.aggregated_by(
+            period, iris.analysis.MEAN)
 
         cdd_index_mean.remove_coord('time')
         cdd_periods_mean.remove_coord('time')
         return iris.cube.CubeList(
             (cdd_index_mean, cdd_periods_mean)
         )
-                

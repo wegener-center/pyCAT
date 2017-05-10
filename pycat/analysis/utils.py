@@ -14,19 +14,21 @@
 # You should have received a copy of the GNU General Public License
 # along with pyCAT. If not, see <http://www.gnu.org/licenses/>.
 
-import numpy as np
-import numpy.ma as ma
 import datetime
-from dateutil import parser
-from dateutil.relativedelta import relativedelta
 
 import iris
+import numpy as np
+import numpy.ma as ma
+from dateutil import parser
+from dateutil.relativedelta import relativedelta
+from iris.coords import DimCoord
+
 try:
     from cf_units import Unit
 except:
     # for iris<=1.9
     from iris.unit import Unit
-from iris.coords import DimCoord
+
 
 def _get_max_true_block_length(up_down):
     """
@@ -46,7 +48,7 @@ def _get_max_true_block_length(up_down):
         of maximum of the True block lengths in the array
     """
     out_shape = up_down[0].shape[:-1]
-    ret = ma.zeros(out_shape)-1
+    ret = ma.zeros(out_shape) - 1
     ret.fill_value = -1
     ret.mask = True
     for index in np.ndindex(out_shape):
@@ -54,10 +56,11 @@ def _get_max_true_block_length(up_down):
             start_idxs = ma.where(up_down[0][index])
             stop_idxs = ma.where(up_down[1][index])
             try:
-                ret[index] = np.max(stop_idxs[-1]-start_idxs[-1]+1)
+                ret[index] = np.max(stop_idxs[-1] - start_idxs[-1] + 1)
             except ValueError:
                 ret[index] = 0
     return ret
+
 
 def _get_len_true_block_length(up_down, length):
     """
@@ -80,7 +83,7 @@ def _get_len_true_block_length(up_down, length):
         of block lengths succeeding the given length
     """
     out_shape = up_down[0].shape[:-1]
-    ret = ma.zeros(out_shape)-1
+    ret = ma.zeros(out_shape) - 1
     ret.fill_value = -1
     ret.mask = True
     for index in np.ndindex(out_shape):
@@ -88,11 +91,12 @@ def _get_len_true_block_length(up_down, length):
             start_idxs = ma.where(up_down[0][index])
             stop_idxs = ma.where(up_down[1][index])
             try:
-                dry_blocks = stop_idxs[-1]-start_idxs[-1]+1
-                ret[index] = np.where(dry_blocks>length)[0].shape[0]
+                dry_blocks = stop_idxs[-1] - start_idxs[-1] + 1
+                ret[index] = np.where(dry_blocks > length)[0].shape[0]
             except ValueError:
                 ret[index] = 0
     return ret
+
 
 def _get_true_block_lengths(array, axis=-1):
     """
@@ -113,19 +117,20 @@ def _get_true_block_lengths(array, axis=-1):
     # roll the considered axis to the end
     a = np.rollaxis(array, axis, array.ndim)
     up = np.concatenate(
-        (np.resize(a[...,0],a.shape[:-1]+(1,)),
-         np.logical_and(np.logical_not(a[...,:-1]), a[...,1:])
-     ), axis=a.ndim-1)
+        (np.resize(a[..., 0], a.shape[:-1] + (1,)),
+         np.logical_and(np.logical_not(a[..., :-1]), a[..., 1:])
+         ), axis=a.ndim - 1)
     down = np.concatenate(
-        (np.logical_and(a[...,:-1], np.logical_not(a[...,1:])),
-         np.resize(a[...,-1], a.shape[:-1]+(1,))
-     ), axis=a.ndim-1)
+        (np.logical_and(a[..., :-1], np.logical_not(a[..., 1:])),
+         np.resize(a[..., -1], a.shape[:-1] + (1,))
+         ), axis=a.ndim - 1)
 
     if isinstance(a, ma.core.MaskedArray):
         up.mask = a.mask
     else:
         up = ma.masked_array(up, False)
     return up, down
+
 
 def _make_time_dimension(start_date, end_date, period='year', align='center'):
     """
@@ -135,7 +140,7 @@ def _make_time_dimension(start_date, end_date, period='year', align='center'):
 
     * start_date (string or datetime):
         the start date of the vector
-    
+
     * end_date (string or datetime):
         the end date of the vector
 
@@ -153,7 +158,7 @@ def _make_time_dimension(start_date, end_date, period='year', align='center'):
 
     iris.coords.DimCoord with standard_name 'time' using a gregorian calendar
     """
-    
+
     if not isinstance(start_date, datetime.datetime):
         start_date = parser.parse(start_date)
     if not isinstance(end_date, datetime.datetime):
@@ -162,8 +167,8 @@ def _make_time_dimension(start_date, end_date, period='year', align='center'):
     first_day_of_year = datetime.datetime(start_date.year, 1, 1)
     units = Unit('days since {:%F}'.format(first_day_of_year),
                  calendar='gregorian'
-             )
-    
+                 )
+
     if period == 'year':
         increment = relativedelta(years=1)
         start = datetime.datetime(start_date.year, 1, 1)
@@ -171,7 +176,7 @@ def _make_time_dimension(start_date, end_date, period='year', align='center'):
         increment = relativedelta(months=3)
         year = start_date.year
         month = start_date.month / 3 * 3
-        if month in (0,12):
+        if month in (0, 12):
             month = 12
             year -= 1
         start = datetime.datetime(year, month, 1)
@@ -185,20 +190,22 @@ def _make_time_dimension(start_date, end_date, period='year', align='center'):
         raise ValueError("period must be one of year, season, month or day")
 
     if align == 'center':
-        start = start + ((start+increment-relativedelta(days=1)) - start)/2
+        start = start + \
+            ((start + increment - relativedelta(days=1)) - start) / 2
     elif align == 'last':
         start = start + increment - relativedelta(days=1)
 
     data = []
     while start < end_date:
-        data.append((start-first_day_of_year).days)
+        data.append((start - first_day_of_year).days)
         start += increment
 
     return DimCoord(np.array(data),
                     var_name='time',
                     standard_name='time',
                     units=units
-                )
+                    )
+
 
 def _create_cube(long_name='', var_name='', units='1',
                  dim_coords_and_dims=[], fill_value=-1):
@@ -208,7 +215,7 @@ def _create_cube(long_name='', var_name='', units='1',
     Kwargs:
 
     * long_name (string):
-        Long description of the variable   
+        Long description of the variable
 
     * var_name (string):
         Variable name
@@ -222,11 +229,11 @@ def _create_cube(long_name='', var_name='', units='1',
     Returns:
         An 'empty' iris.cube.Cube
     """
-    shape = [ x[0].shape[0] for x in dim_coords_and_dims ]
+    shape = [x[0].shape[0] for x in dim_coords_and_dims]
     array = ma.ones(shape) * fill_value
     array.mask = True
     array.fill_value = fill_value
-    
+
     if isinstance(units, str):
         units = Unit(units)
     return iris.cube.Cube(array, long_name=long_name, var_name=var_name,
