@@ -27,6 +27,7 @@ sce_cubes (:class:`iris.cube.CubeList`), \*args, \**kwargs
 """
 
 import logging
+
 import numpy as np
 
 
@@ -353,9 +354,9 @@ def scaled_distribution_mapping(
         the scenario data that shall be corrected
     """
     implemented_parameters = {
-        'air_temperature': _absolute_sdm,
-        'precipitation_amount': _relative_sdm,
-        'surface_downwelling_shortwave_flux_in_air': _relative_sdm,
+        'air_temperature': absolute_sdm,
+        'precipitation_amount': relative_sdm,
+        'surface_downwelling_shortwave_flux_in_air': relative_sdm,
     }
     try:
         implemented_parameters[obs_cube.standard_name](
