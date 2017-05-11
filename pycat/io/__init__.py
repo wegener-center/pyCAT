@@ -103,9 +103,15 @@ class Dataset(object):
 
         remove_bounds = False
         if not x.has_bounds():
-            x.guess_bounds()
-            y.guess_bounds()
             remove_bounds = True
+            try:
+                x.guess_bounds()
+            except ValueError:
+                x.bounds = np.repeat(x.points, 2)
+            try:
+                y.guess_bounds()
+            except ValueError:
+                y.bounds = np.repeat(y.points, 2)
 
         x_edges = np.concatenate(
             (x.bounds[:, 0], np.array([x.bounds[-1, -1]] * y.shape[0]),
