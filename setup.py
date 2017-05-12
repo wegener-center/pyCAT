@@ -10,6 +10,7 @@ setup(name='pyCAT',
       license='GPLv3',
       author='Armin Leuprecht',
       author_email='armin.leuprecht@uni-graz.at',
+      scripts=['bin/merge-bc-output.py'],
       packages=['pycat', 'pycat.analysis', 'pycat.io', 'pycat.esd'],
       classifiers=[
           'Development Status :: 1 - Planning',
