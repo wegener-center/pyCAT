@@ -58,7 +58,8 @@ def quantile_mapping(obs_cube, mod_cube, sce_cubes, *args, **kwargs):
 
         index_list.insert(0, 0)
         index = tuple(index_list)
-        if obs_cube.data.mask[index]:
+        if isinstance(obs_cube.data, np.ma.MaskedArray) \
+           and obs_cube.data.mask[index]:
             continue
 
         index_list[0] = slice(0, None, 1)
@@ -123,7 +124,8 @@ def relative_sdm(
         index = tuple(index_list)
 
         # consider only cells with valid observational data
-        if obs_cube.data.mask[index]:
+        if isinstance(obs_cube.data, np.ma.MaskedArray) \
+           and obs_cube.data.mask[index]:
             continue
 
         index_list[0] = slice(0, None, 1)
@@ -244,7 +246,8 @@ def absolute_sdm(
 
         index_list.insert(0, 0)
         index = tuple(index_list)
-        if obs_cube.data.mask[index]:
+        if isinstance(obs_cube.data, np.ma.MaskedArray) \
+           and obs_cube.data.mask[index]:
             continue
 
         index_list[0] = slice(0, None, 1)
