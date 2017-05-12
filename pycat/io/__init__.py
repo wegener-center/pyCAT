@@ -101,17 +101,20 @@ class Dataset(object):
         # save the coordinate system
         self._coord_system = x.coord_system.as_cartopy_crs()
 
+        # make a bounding box in lon/lat
+        # if the dataset consists only of one cell/row/column draw a large
+        # box around it
         remove_bounds = False
         if not x.has_bounds():
             remove_bounds = True
             try:
                 x.guess_bounds()
             except ValueError:
-                x.bounds = np.repeat(x.points, 2)
+                x.bounds = np.repeat(x.points, 2) + np.array([-1, 1]) * 30000
             try:
                 y.guess_bounds()
             except ValueError:
-                y.bounds = np.repeat(y.points, 2)
+                y.bounds = np.repeat(y.points, 2) + np.array([-1, 1]) * 30000
 
         x_edges = np.concatenate(
             (x.bounds[:, 0], np.array([x.bounds[-1, -1]] * y.shape[0]),
