@@ -250,5 +250,5 @@ class ScaledDistributionMapping(BiasCorrector):
                  correction_period, *args, **kwargs):
         super(ScaledDistributionMapping, self).__init__(
             scaled_distribution_mapping, observation, model, scenarios,
-            reference_period, correction_period, time_unit='month',
-            *args, **kwargs)
+            reference_period, correction_period=correction_period,
+            time_unit='month', *args, **kwargs)
