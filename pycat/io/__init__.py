@@ -55,6 +55,8 @@ class Dataset(object):
             | *function signature*: (cube, field, filename)
 
         """
+        from cartopy.crs import Geodetic
+
         self.directory = directory
         self.filename = filename
 
@@ -159,6 +161,8 @@ class Dataset(object):
 
             the concatenated constrained cube of the Dataset
         """
+        from iris.experimental.equalise_cubes import equalise_attributes
+
         constraints = extra_constraints
         if self.period != self._orig_period:
             start, end = self.period

@@ -23,9 +23,25 @@
 
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../../..'))
 
+
+# from mock import Mock as MagicMock
+
+
+# class Mock(MagicMock):
+
+#     @classmethod
+#     def __getattr__(cls, name):
+#         return MagicMock()
+
+# MOCK_MODULES = [
+#     'numpy', 'iris', 'iris.analysis', 'iris.time',
+# ]
+# sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+
+sys.path.insert(0, os.path.abspath('../../..'))
 import pycat
+
 
 # -- General configuration ------------------------------------------------
 
@@ -114,7 +130,11 @@ todo_include_todos = True
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinxdoc'
+on_rtd = os.environ.get('READTHEDOCS') == 'True'
+if on_rtd:
+    html_theme = 'default'
+else:
+    html_theme = 'sphinxdoc'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the

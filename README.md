@@ -4,7 +4,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/wegener-center/pyCAT.svg)](https://github.com/wegener-center/pyCAT/issues)
 [![GitHub forks](https://img.shields.io/github/forks/wegener-center/pyCAT.svg)](https://github.com/wegener-center/pyCAT/network)
 [![GitHub license](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://github.com/wegener-center/pyCAT/blob/master/LICENSE.md)
-[![GitHub docs](https://img.shields.io/badge/docs-latest-green.svg)](http://pycat.readthedocs.io/en/latest/)
+[![Documentation Status](https://readthedocs.org/projects/pycat/badge/?version=latest)](http://pycat.readthedocs.io/en/latest/?badge=latest)
 
 Climate Analysis Tool written in python
 
@@ -24,12 +24,13 @@ dependencies, please refer to the [INSTALL](INSTALL.rst) file.
 Documentation
 -------------
 
-Documentation is available at [readthedocs](http://pycat.readthedocs.io/en/latest/).
+Package documentation is always available at [readthedocs](http://pycat.readthedocs.io/en/latest/).
 
 The implemented bias-correction methods are described in:
 
     - Basic [Quantile Mapping](http://dx.doi.org/10.1002/joc.2168)
     - [Scaled Distribution Mapping](http://www.hydrol-earth-syst-sci-discuss.net/hess-2016-435/)
+
 
 Copyright and license
 ---------------------

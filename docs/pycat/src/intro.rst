@@ -41,7 +41,7 @@ of days, e.g. ``qm.correct(59)`` will only correct the leap-days for the
 regarded period.
 
 For Scaled Distribution Mapping (SDM) the procedure is analogue. Again
-take a look at :class:``.esd.ScaledDistributionMapping` for
+take a look at :class:`.esd.ScaledDistributionMapping` for
 additional arguments. Again with ``sdm.correct([2, 9])`` you can limit
 the bias correction the months February and September.
 
