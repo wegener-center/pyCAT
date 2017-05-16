@@ -24,21 +24,22 @@
 import os
 import sys
 
+on_rtd = os.environ.get('READTHEDOCS') == 'True'
 
-# from mock import Mock as MagicMock
+if on_rtd:
+    from mock import Mock as MagicMock
 
+    class Mock(MagicMock):
+        @classmethod
+        def __getattr__(cls, name):
+            return MagicMock()
 
-# class Mock(MagicMock):
+    MOCK_MODULES = [
+        'numpy', 'numpy.dtype', 'iris', 'iris.analysis', 'iris.time',
+    ]
+    sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
-#     @classmethod
-#     def __getattr__(cls, name):
-#         return MagicMock()
-
-# MOCK_MODULES = [
-#     'numpy', 'iris', 'iris.analysis', 'iris.time',
-# ]
-# sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
-
+    
 sys.path.insert(0, os.path.abspath('../../..'))
 import pycat
 
@@ -130,7 +131,6 @@ todo_include_todos = True
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-on_rtd = os.environ.get('READTHEDOCS') == 'True'
 if on_rtd:
     html_theme = 'default'
 else:
