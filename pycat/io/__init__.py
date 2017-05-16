@@ -22,6 +22,7 @@ from iris.experimental.equalise_cubes import equalise_attributes
 
 
 class Dataset(object):
+
     """
     A Dataset is holding meta data for an :class:`iris.cube.Cube`
 
@@ -34,8 +35,7 @@ class Dataset(object):
         '360_day': 360
     }
 
-    def __init__(self, directory, filename, constraints=None,
-                 callback=None, tmp_directory=None):
+    def __init__(self, directory, filename, constraints=None, callback=None):
         """
         Args:
 
@@ -54,21 +54,9 @@ class Dataset(object):
             a function to add metadata to the cube
             | *function signature*: (cube, field, filename)
 
-        * tmp_directory (str):
-            path to a write-able directory where intermediate data can be saved
-            defaults to directory/tmp
         """
         self.directory = directory
         self.filename = filename
-        self.tmp_directory = tmp_directory or os.path.join(directory, 'tmp')
-        # try to create the temporary directory
-        # if there are other problems (e.g. permissions) except that it already
-        # exists an exception will be raised
-        try:
-            os.makedirs(self.tmp_directory)
-        except OSError:
-            if not os.path.isdir(self.tmp_directory):
-                raise
 
         self.cube_list = iris.load(os.path.join(directory, filename),
                                    constraints=constraints, callback=callback)
@@ -134,6 +122,10 @@ class Dataset(object):
             x.bounds = None
             y.bounds = None
 
+        # set the initial temporal and spatial extent
+        self.period = self._orig_period
+        self.extent = self._orig_extent
+
     def __repr__(self):
         return "<pycat 'Dataset' of {} / {} ({})>".format(
             self._orig_standard_name, self._orig_units,
@@ -144,22 +136,12 @@ class Dataset(object):
         return self.__unicode__(self)
 
     def __unicode__(self):
-        try:
-            period = self.period
-        except AttributeError:
-            period = self._orig_period
-
-        try:
-            extent = self.extent
-        except AttributeError:
-            extent = self._orig_extent
-
         return u"""{} / {} ({})
  temporal period:          {:%F} -- {:%F} (excluding)
  north, east, south, west  {}, {}, {}, {}""".format(
             self._orig_standard_name, self._orig_units,
             os.path.join(self.directory, self.filename),
-            period[0], period[1], *extent)
+            self.period[0], self.period[1], *self.extent)
 
     def get_cube(self, extra_constraints=None):
         """
@@ -178,18 +160,14 @@ class Dataset(object):
             the concatenated constrained cube of the Dataset
         """
         constraints = extra_constraints
-        try:
+        if self.period != self._orig_period:
             start, end = self.period
             constraints &= iris.Constraint(
                 time=lambda cell: start <= cell.point < end
             )
-        except AttributeError:
-            pass
 
-        try:
+        if self.extent != self._orig_extent:
             constraints &= self._extent_constraint()
-        except AttributeError:
-            pass
 
         with iris.FUTURE.context(cell_datetime_objects=True):
             cl = self.cube_list.extract(constraints)
