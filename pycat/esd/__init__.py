@@ -39,13 +39,13 @@ class BiasCorrector(object):
             | *call signature*: (obs_cube, ref_cube, sce_cubes,
                                  \*args, \**kwargs)
 
-        * observation (:class:`pycat.io.Dataset`):
+        * observation (:class:`.io.Dataset`):
             the observation dataset
 
-        * model (:class:`pycat.io.dataset.Dataset`):
+        * model (:class:`.io.Dataset`):
             the model dataset
 
-        * scenarios (:class:`pycat.io.dataset.Dataset` or list of those)
+        * scenarios (:class:`.io.Dataset` or list of those)
             the scenarios that shall be bias corrected
 
         Kwargs:

@@ -16,11 +16,12 @@
 """
 A package providing calculation of climate indices.
 
-This module defines a suite of :class:`pycat.analysis.Indexer` instances,
+This module defines a suite of :class:`.Indexer` instances,
 """
 
 
 class Indexer(object):
+
     """
     The :class:`Indexer` class provides common functionality for temporal
     climate index calculation
@@ -29,6 +30,7 @@ class Indexer(object):
 
 
 class Period(object):
+
     """
     The :class:`Period` class provides
     """

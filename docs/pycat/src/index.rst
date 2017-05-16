@@ -12,7 +12,11 @@ pyCAT documentation table of contents
 
    install.rst
 
-	   
+.. toctree::
+   :maxdepth: 1
+
+   intro.rst
+
 .. toctree::
    :maxdepth: 1
 
