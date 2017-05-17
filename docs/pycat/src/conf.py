@@ -20,29 +20,18 @@
 # import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
+"""
+sphinx configuration file
 
+isort:skip_file
+"""
 import os
 import sys
 
 on_rtd = os.environ.get('READTHEDOCS') == 'True'
 
-if on_rtd:
-    from mock import Mock as MagicMock
-
-    class Mock(MagicMock):
-        @classmethod
-        def __getattr__(cls, name):
-            return MagicMock()
-
-    MOCK_MODULES = [
-        'numpy', 'numpy.dtype', 'iris', 'iris.analysis', 'iris.time',
-    ]
-    sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
-
-    
 sys.path.insert(0, os.path.abspath('../../..'))
 import pycat
-
 
 # -- General configuration ------------------------------------------------
 
@@ -75,6 +64,11 @@ intersphinx_mapping = {
     'iris-grib': ('http://iris-grib.readthedocs.io/en/latest/', None),
 }
 
+autodoc_mock_imports = [
+    'numpy', 'iris', 'iris.analysis', 'iris.time',
+    'iris.experimental', 'iris.experimental.equalise_cubes',
+    'cartopy', 'cartopy.crs'
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
