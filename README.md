@@ -28,8 +28,8 @@ Package documentation is always available at [readthedocs](http://pycat.readthed
 
 The implemented bias-correction methods are described in:
 
-    - Basic [Quantile Mapping](http://dx.doi.org/10.1002/joc.2168)
-    - [Scaled Distribution Mapping](http://www.hydrol-earth-syst-sci-discuss.net/hess-2016-435/)
+ - Basic [Quantile Mapping](http://dx.doi.org/10.1002/joc.2168)
+ - [Scaled Distribution Mapping](http://www.hydrol-earth-syst-sci-discuss.net/hess-2016-435/)
 
 
 Copyright and license
