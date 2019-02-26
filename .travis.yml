@@ -29,7 +29,7 @@ install:
   - source activate $ENV_NAME
 
   # customize the environment
-  - conda config --add channels scitools
+  - conda config --add channels conda-forge
   - conda install --quiet --file conda-requirements.txt
 
   # output env
