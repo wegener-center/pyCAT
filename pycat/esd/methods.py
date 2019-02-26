@@ -51,6 +51,7 @@ def quantile_mapping(obs_cube, mod_cube, sce_cubes, *args, **kwargs):
     """
     from statsmodels.distributions.empirical_distribution import ECDF
 
+    obs_cube_mask = np.ma.getmask(obs_cube.data)
     cell_iterator = np.nditer(obs_cube.data[0], flags=['multi_index'])
     while not cell_iterator.finished:
         index_list = list(cell_iterator.multi_index)
@@ -58,8 +59,7 @@ def quantile_mapping(obs_cube, mod_cube, sce_cubes, *args, **kwargs):
 
         index_list.insert(0, 0)
         index = tuple(index_list)
-        if isinstance(obs_cube.data, np.ma.MaskedArray) \
-           and obs_cube.data.mask[index]:
+        if obs_cube_mask and obs_cube_mask[index]:
             continue
 
         index_list[0] = slice(0, None, 1)
@@ -115,6 +115,7 @@ def relative_sdm(
     cdf_threshold = kwargs.get('cdf_threshold', .99999999)
     min_samplesize = kwargs.get('min_samplesize', 10)
 
+    obs_cube_mask = np.ma.getmask(obs_cube.data)
     cell_iterator = np.nditer(obs_cube.data[0], flags=['multi_index'])
     while not cell_iterator.finished:
         index_list = list(cell_iterator.multi_index)
@@ -124,8 +125,7 @@ def relative_sdm(
         index = tuple(index_list)
 
         # consider only cells with valid observational data
-        if isinstance(obs_cube.data, np.ma.MaskedArray) \
-           and obs_cube.data.mask[index]:
+        if obs_cube_mask and obs_cube_mask[index]:
             continue
 
         index_list[0] = slice(0, None, 1)
@@ -239,6 +239,7 @@ def absolute_sdm(
 
     cdf_threshold = kwargs.get('cdf_threshold', .99999)
 
+    obs_cube_mask = np.ma.getmask(obs_cube.data)
     cell_iterator = np.nditer(obs_cube.data[0], flags=['multi_index'])
     while not cell_iterator.finished:
         index_list = list(cell_iterator.multi_index)
@@ -246,8 +247,7 @@ def absolute_sdm(
 
         index_list.insert(0, 0)
         index = tuple(index_list)
-        if isinstance(obs_cube.data, np.ma.MaskedArray) \
-           and obs_cube.data.mask[index]:
+        if obs_cube_mask and obs_cube_mask[index]:
             continue
 
         index_list[0] = slice(0, None, 1)
