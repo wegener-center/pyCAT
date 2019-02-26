@@ -32,7 +32,7 @@ The proposed installation (using conda)
 Download and install conda from http://conda.pydata.org/miniconda.html.
 
 Once conda is running you just need to create an environment, add the
-scitools-channel and install the dependencies
+conda-forge channel and install the dependencies
 
 ::
 
