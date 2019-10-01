@@ -2,6 +2,7 @@
 # conda create -n <name> --file conda-requirements.txt
 
 # Mandatory dependencies
+proj4=6.1.0
 iris
 statsmodels
 

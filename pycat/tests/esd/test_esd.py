@@ -16,6 +16,9 @@
 # You should have received a copy of the GNU General Public License
 # along with pyCAT. If not, see <http://www.gnu.org/licenses/>.
 
+import os
+import warnings
+
 import iris
 import numpy as np
 import pycat.esd.utils
@@ -25,6 +28,7 @@ try:
 except:
     from iris.unit import Unit
 
+warnings.filterwarnings("ignore")
 
 def _create_cube(calendar):
     """
@@ -54,3 +58,43 @@ def test_leap_year():
 
     # there must be 25 leap years
     assert c.shape[0] == 25
+
+
+def test_qm():
+    from pycat.io import Dataset
+    from pycat.esd import QuantileMapping
+
+    obs = Dataset('sample-data', 'observation.nc')
+    mod = Dataset('sample-data', 'model*.nc')
+    sce = Dataset('sample-data', 'scenario*.nc')
+
+    qm = QuantileMapping(obs, mod, sce)
+
+    outfile =  os.path.join(
+        qm.work_dir,
+        'quantile_mapping_tas_scenario-0_2021-2030_day-001.nc')
+    os.remove(outfile)
+    
+    qm.correct(1)
+
+    assert os.path.exists(outfile)
+    
+
+def test_sdm():
+    from pycat.io import Dataset
+    from pycat.esd import ScaledDistributionMapping
+
+    obs = Dataset('sample-data', 'observation.nc')
+    mod = Dataset('sample-data', 'model*.nc')
+    sce = Dataset('sample-data', 'scenario*.nc')
+    
+    sdm = ScaledDistributionMapping(obs, mod, sce)
+
+    outfile = os.path.join(
+        sdm.work_dir,
+        'scaled_distribution_mapping_tas_scenario-0_2021-2030_month-01.nc')
+    os.remove(outfile)
+
+    sdm.correct(1)
+
+    assert os.path.exists(outfile)
