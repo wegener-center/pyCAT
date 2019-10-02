@@ -23,7 +23,7 @@ A package for bias correction of climate data
 import os
 
 # pyCAT version
-__version__ = '1.0.0'
+__version__ = '1.1.0'
 
 # restrict imports when using "from pycat import *"
 __all__ = ['config', 'tmp_path', 'data_path']
