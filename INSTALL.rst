@@ -39,7 +39,7 @@ conda-forge channel and install the dependencies
     ENV_NAME="pycat"
     conda create --name $ENV_NAME python=3.7
     conda config --add channels conda-forge
-    source activate $ENV_NAME
+    conda activate $ENV_NAME
     conda install --file conda-requirements.txt
 
 Afterwards you can install pyCAT
