@@ -1,5 +1,5 @@
 version: 2
 sphinx:
-  configurtion: docs/pycat/src/conf.py
+  configuration: docs/pycat/src/conf.py
 
 formats: all
