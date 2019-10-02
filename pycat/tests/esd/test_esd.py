@@ -30,6 +30,7 @@ except:
 
 warnings.filterwarnings("ignore")
 
+
 def _create_cube(calendar):
     """
     create a cube with time-vector from 1949-01-01 to 2050-12-31
@@ -39,20 +40,23 @@ def _create_cube(calendar):
     data = np.arange(length)
     cube = iris.cube.Cube(data)
     time = iris.coords.DimCoord(
-        np.arange(length), standard_name='time',
-        units=Unit('days since 1951-01-01', calendar=calendar),
-        long_name='time', var_name='time')
+        np.arange(length),
+        standard_name="time",
+        units=Unit("days since 1951-01-01", calendar=calendar),
+        long_name="time",
+        var_name="time",
+    )
     cube.add_dim_coord(time, 0)
     return cube
 
 
 def test_leap_year():
-    calendar = 'standard'
+    calendar = "standard"
     leap_day = 59  # this is 29th of february in leap years
     cube = _create_cube(calendar)
-    day_contraint, window_constraint = \
-        pycat.esd.utils.generate_day_constraint_with_window(
-            leap_day, 1, calendar)
+    day_contraint, window_constraint = pycat.esd.utils.generate_day_constraint_with_window(
+        leap_day, 1, calendar
+    )
     with iris.FUTURE.context(cell_datetime_objects=True):
         c = cube.extract(day_contraint)
 
@@ -64,36 +68,42 @@ def test_qm():
     from pycat.io import Dataset
     from pycat.esd import QuantileMapping
 
-    obs = Dataset('sample-data', 'observation.nc')
-    mod = Dataset('sample-data', 'model*.nc')
-    sce = Dataset('sample-data', 'scenario*.nc')
+    obs = Dataset("sample-data", "observation.nc")
+    mod = Dataset("sample-data", "model*.nc")
+    sce = Dataset("sample-data", "scenario*.nc")
 
     qm = QuantileMapping(obs, mod, sce)
 
-    outfile =  os.path.join(
-        qm.work_dir,
-        'quantile_mapping_tas_scenario-0_2021-2030_day-001.nc')
-    os.remove(outfile)
-    
+    outfile = os.path.join(
+        qm.work_dir, "quantile_mapping_tas_scenario-0_2021-2030_day-001.nc"
+    )
+    try:
+        os.remove(outfile)
+    except FileNotFoundError:
+        pass
+
     qm.correct(1)
 
     assert os.path.exists(outfile)
-    
+
 
 def test_sdm():
     from pycat.io import Dataset
     from pycat.esd import ScaledDistributionMapping
 
-    obs = Dataset('sample-data', 'observation.nc')
-    mod = Dataset('sample-data', 'model*.nc')
-    sce = Dataset('sample-data', 'scenario*.nc')
-    
+    obs = Dataset("sample-data", "observation.nc")
+    mod = Dataset("sample-data", "model*.nc")
+    sce = Dataset("sample-data", "scenario*.nc")
+
     sdm = ScaledDistributionMapping(obs, mod, sce)
 
     outfile = os.path.join(
-        sdm.work_dir,
-        'scaled_distribution_mapping_tas_scenario-0_2021-2030_month-01.nc')
-    os.remove(outfile)
+        sdm.work_dir, "scaled_distribution_mapping_tas_scenario-0_2021-2030_month-01.nc"
+    )
+    try:
+        os.remove(outfile)
+    except FileNotFoundError:
+        pass
 
     sdm.correct(1)
 
