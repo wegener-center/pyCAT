@@ -125,7 +125,7 @@ def relative_sdm(
         index = tuple(index_list)
 
         # consider only cells with valid observational data
-        if obs_cube_mask and obs_cube_mask[index]:
+        if obs_cube_mask.any() and obs_cube_mask[index]:
             continue
 
         index_list[0] = slice(0, None, 1)
@@ -162,9 +162,9 @@ def relative_sdm(
             sce_gamma = gamma.fit(sce_raindays, floc=0)
 
             expected_sce_raindays = min(
-                np.round(
+                int(np.round(
                     len(sce_data) * obs_frequency * sce_frequency
-                    / mod_frequency),
+                    / mod_frequency)),
                 len(sce_data))
 
             sce_cdf = gamma.cdf(np.sort(sce_raindays), *sce_gamma)
@@ -247,7 +247,7 @@ def absolute_sdm(
 
         index_list.insert(0, 0)
         index = tuple(index_list)
-        if obs_cube_mask and obs_cube_mask[index]:
+        if obs_cube_mask.any() and obs_cube_mask[index]:
             continue
 
         index_list[0] = slice(0, None, 1)
