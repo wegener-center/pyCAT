@@ -72,9 +72,6 @@ if __name__ == '__main__':
         level=args.log_level, datefmt='%F %T'
     )
 
-    # let iris operate on datetime objects
-    iris.FUTURE.cell_datetime_objects = True
-
     iris.config.warnings.filterwarnings('ignore')
 
     logging.info('Running {}'.format(' '.join(sys.argv)))

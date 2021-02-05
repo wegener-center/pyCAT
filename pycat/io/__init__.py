@@ -173,8 +173,7 @@ class Dataset(object):
         if self.extent != self._orig_extent:
             constraints &= self._extent_constraint()
 
-        with iris.FUTURE.context(cell_datetime_objects=True):
-            cl = self.cube_list.extract(constraints)
+        cl = self.cube_list.extract(constraints)
         equalise_attributes(cl)
 
         merged_cube = self._merge_by_time(cl)
