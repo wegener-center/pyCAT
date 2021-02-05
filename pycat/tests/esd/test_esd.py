@@ -57,8 +57,7 @@ def test_leap_year():
     day_contraint, window_constraint = pycat.esd.utils.generate_day_constraint_with_window(
         leap_day, 1, calendar
     )
-    with iris.FUTURE.context(cell_datetime_objects=True):
-        c = cube.extract(day_contraint)
+    c = cube.extract(day_contraint)
 
     # there must be 25 leap years
     assert c.shape[0] == 25

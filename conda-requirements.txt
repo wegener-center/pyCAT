@@ -3,7 +3,7 @@
 
 # Mandatory dependencies
 proj4=6.1.0
-iris
+iris=2.4.0
 statsmodels
 
 # build dependencies
