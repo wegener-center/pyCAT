@@ -45,8 +45,6 @@ def getargs(test=None):
                         help='start year')
     parser.add_argument('--end-year', type=int, required=False,
                         help='end year')
-    parser.add_argument('--log-file', type=str, required=False,
-                        help='name of log-file')
     parser.add_argument('-v', '--verbose', dest="log_level", const=logging.INFO,
                         action='store_const', default=logging.WARNING,
                         help='be verbose')
@@ -67,7 +65,7 @@ if __name__ == '__main__':
 
     # set the logger
     logging.basicConfig(
-        filename=args.log_file, stream=sys.stderr,
+        stream=sys.stderr,
         format="%(asctime)s %(levelname)s: %(message)s",
         level=args.log_level, datefmt='%F %T'
     )
