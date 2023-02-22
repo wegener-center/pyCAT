@@ -15,7 +15,7 @@ Installation
 
 pyCAT can be installed using the following command:
 
-    python setup.py install
+    pip install .
 
 For detailed installation instruction, especially how to install
 dependencies, please refer to the [INSTALL](INSTALL.rst) file.
