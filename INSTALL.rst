@@ -10,7 +10,7 @@ details below) change to the download path and enter:
 
 ::
 
-    python setup.py install
+    pip install .
 
 Requirements
 ~~~~~~~~~~~~
@@ -46,7 +46,7 @@ Afterwards you can install pyCAT
 
 ::
    
-    python setup.py install
+    pip install .
 
 
 Installation using python-virtualenv
